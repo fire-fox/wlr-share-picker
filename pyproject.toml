@@ -3,8 +3,8 @@ requires = ["setuptools>=77"]  # PEP 639: license as an SPDX string
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "compartir-selector"
-dynamic = ["version"]  # compartir_selector.__version__; the PKGBUILD repeats it and tests/test_release.py checks both
+name = "wlr-share-picker"
+dynamic = ["version"]  # wlr_share_picker.__version__; the PKGBUILD repeats it and tests/test_release.py checks both
 description = "Thumbnail picker for screen sharing with xdg-desktop-portal-wlr"
 readme = "README.md"
 license = "MIT"
@@ -24,19 +24,19 @@ dependencies = []
 dev = ["pytest", "ruff", "hypothesis"]
 
 [project.scripts]
-compartir-selector = "compartir_selector.cli:main"
+wlr-share-picker = "wlr_share_picker.cli:main"
 
 [project.urls]
-Repository = "https://github.com/fire-fox/compartir-selector"
+Repository = "https://github.com/fire-fox/wlr-share-picker"
 
 [tool.setuptools]
-packages = ["compartir_selector"]
-dynamic = { version = { attr = "compartir_selector.__version__" } }
+packages = ["wlr_share_picker"]
+dynamic = { version = { attr = "wlr_share_picker.__version__" } }
 # The locale/ tree is data listed below, not subpackages (without this setuptools warns on every build).
 include-package-data = false
 
 [tool.setuptools.package-data]
-compartir_selector = ["locale/*/LC_MESSAGES/*.mo", "locale/*.pot", "locale/*/LC_MESSAGES/*.po"]
+wlr_share_picker = ["locale/*/LC_MESSAGES/*.mo", "locale/*.pot", "locale/*/LC_MESSAGES/*.po"]
 
 [tool.ruff]
 line-length = 130
@@ -52,9 +52,9 @@ select = ["E", "F", "W", "I", "B", "UP", "SIM", "S"]
 "scripts/*" = ["S311"]  # seeded random for the drawings of the demo screenshot, not for secrets
 
 [tool.mutmut]  # scripts/mutation.sh, weekly in CI
-paths_to_mutate = ["compartir_selector/"]
+paths_to_mutate = ["wlr_share_picker/"]
 tests_dir = ["tests/"]
-also_copy = ["README.md", "CHANGELOG.md", "config.example.toml", "packaging/", "scripts/", "compartir-selector"]
+also_copy = ["README.md", "CHANGELOG.md", "config.example.toml", "packaging/", "scripts/", "wlr-share-picker"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

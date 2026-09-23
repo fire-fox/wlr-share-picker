@@ -4,7 +4,7 @@ import importlib.util
 import re
 from pathlib import Path
 
-import compartir_selector
+import wlr_share_picker
 
 ROOT = Path(__file__).resolve().parent.parent
 spec = importlib.util.spec_from_file_location("release_notes", ROOT / "scripts" / "release-notes.py")
@@ -14,11 +14,11 @@ spec.loader.exec_module(release_notes)
 
 def test_pkgbuild_and_package_share_the_version():
     pkgver = re.search(r"^pkgver=(.+)$", (ROOT / "packaging" / "PKGBUILD").read_text(), re.M).group(1)
-    assert pkgver == compartir_selector.__version__
+    assert pkgver == wlr_share_picker.__version__
 
 
 def test_the_current_version_has_release_notes():
-    assert release_notes.section((ROOT / "CHANGELOG.md").read_text(), compartir_selector.__version__)
+    assert release_notes.section((ROOT / "CHANGELOG.md").read_text(), wlr_share_picker.__version__)
 
 
 def test_section_parsing():

@@ -1,5 +1,5 @@
-from compartir_selector import ui_dmenu
-from compartir_selector.config import Config
+from wlr_share_picker import ui_dmenu
+from wlr_share_picker.config import Config
 
 LINES = ["Monitor: DP-1 ASUS\n", "Window: Roamgate (1f8f)\n"]
 

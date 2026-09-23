@@ -13,10 +13,10 @@ if grep -q '^## Unreleased' CHANGELOG.md; then
   sed -i "s/^## Unreleased.*/## $v — $(date +%F)/" CHANGELOG.md
 fi
 python3 scripts/release-notes.py "$v" >/dev/null
-sed -i "s/^__version__ = .*/__version__ = \"$v\"/" compartir_selector/__init__.py
+sed -i "s/^__version__ = .*/__version__ = \"$v\"/" wlr_share_picker/__init__.py
 sed -i "s/^pkgver=.*/pkgver=$v/; s/^pkgrel=.*/pkgrel=1/" packaging/PKGBUILD
 ruff check . && ruff format --check . && python3 -m pytest -q
-git add CHANGELOG.md compartir_selector/__init__.py packaging/PKGBUILD
+git add CHANGELOG.md wlr_share_picker/__init__.py packaging/PKGBUILD
 git diff --cached --quiet || git commit -q -m "Release $v"
-git tag -a "v$v" -m "compartir-selector $v"
+git tag -a "v$v" -m "wlr-share-picker $v"
 echo "v$v tagged. Publish it with: git push && git push origin v$v"

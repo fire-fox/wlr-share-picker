@@ -6,11 +6,11 @@ import subprocess
 import unicodedata
 from pathlib import Path
 
-from compartir_selector import protocol
-from compartir_selector.captures import Capturer
+from wlr_share_picker import protocol
+from wlr_share_picker.captures import Capturer
 
 ROOT = Path(__file__).resolve().parent.parent
-PACKAGE = ROOT / "compartir_selector"
+PACKAGE = ROOT / "wlr_share_picker"
 MODULES = {p.name: p.read_text(encoding="utf-8") for p in sorted(PACKAGE.glob("*.py"))}
 
 

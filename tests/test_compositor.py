@@ -1,7 +1,7 @@
 import json
 import subprocess
 
-from compartir_selector import compositor
+from wlr_share_picker import compositor
 
 MANGO = {
     "clients": [

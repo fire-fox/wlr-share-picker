@@ -50,7 +50,7 @@ jobs:
       - name: Tag, package version, PKGBUILD and CHANGELOG agree
         run: |
           version="${GITHUB_REF_NAME#v}"
-          test "$(python3 -c 'import compartir_selector as c; print(c.__version__)')" = "$version"
+          test "$(python3 -c 'import wlr_share_picker as c; print(c.__version__)')" = "$version"
           grep -qx "pkgver=$version" packaging/PKGBUILD
           python3 scripts/release-notes.py "$version" > "$RUNNER_TEMP/notes.md"
       - name: PKGBUILD with the checksum of the tag's tarball, and SHA256SUMS
@@ -67,12 +67,12 @@ jobs:
       - name: Signed SBOM for the wheel and the sdist
         uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e # v4.1.0
         with:
-          subject-path: release/compartir_selector-*
-          sbom-path: release/compartir-selector.spdx.json
+          subject-path: release/wlr_share_picker-*
+          sbom-path: release/wlr-share-picker.spdx.json
       - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: >-
           gh release create "$GITHUB_REF_NAME" release/*
-          --verify-tag --title "compartir-selector $GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/notes.md"
+          --verify-tag --title "wlr-share-picker $GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/notes.md"

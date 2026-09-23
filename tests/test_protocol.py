@@ -1,4 +1,4 @@
-from compartir_selector import protocol
+from wlr_share_picker import protocol
 
 
 def test_monitor_with_description():

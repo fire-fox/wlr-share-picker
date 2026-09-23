@@ -1,7 +1,7 @@
 # Security
 
 ## What the picker protects
-`compartir-selector` decides which monitor or window `xdg-desktop-portal-wlr` hands to an app that asked to share the
+`wlr-share-picker` decides which monitor or window `xdg-desktop-portal-wlr` hands to an app that asked to share the
 screen. Its job is that you, not the app, choose; so the answer it prints is always one of the sources the portal
 offered (checked by property-based tests), and it only answers without a dialog in the two cases you enable:
 
@@ -18,7 +18,7 @@ offered (checked by property-based tests), and it only answers without a dialog 
 ## Design choices that matter
 - Nothing runs through a shell: grim, the compositor IPC and the dmenu get argument lists; window titles go to the
   dmenu on stdin, never on its command line. GTK labels never parse markup, so a title cannot style the dialog.
-- Small state files live only in `$XDG_RUNTIME_DIR/compartir-selector` and `$XDG_STATE_HOME/compartir-selector`,
+- Small state files live only in `$XDG_RUNTIME_DIR/wlr-share-picker` and `$XDG_STATE_HOME/wlr-share-picker`,
   created 0700 and used only when they are real directories owned by you; files are written 0600, atomically and
   without following symlinks. Without `XDG_RUNTIME_DIR` the short-lived memory is off (there is no `/tmp` fallback).
 - Thumbnails are temporary files in a private (0700) directory removed on exit, also on SIGTERM.
@@ -42,12 +42,12 @@ runs only GitHub's own actions and waits for the owner's approval. Every release
 provenance attestation, the package a signed SBOM:
 
 ```bash
-gh attestation verify compartir_selector-<version>-py3-none-any.whl --repo fire-fox/compartir-selector \
-  --signer-workflow fire-fox/compartir-selector/.github/workflows/build.yml
+gh attestation verify wlr_share_picker-<version>-py3-none-any.whl --repo fire-fox/wlr-share-picker \
+  --signer-workflow fire-fox/wlr-share-picker/.github/workflows/build.yml
 sha256sum -c SHA256SUMS
 ```
 
 ## Reporting a vulnerability
 Please report it privately through GitHub: **Security → Report a vulnerability** on this repository
-(<https://github.com/fire-fox/compartir-selector/security/advisories/new>). Do not open a public issue. You can
+(<https://github.com/fire-fox/wlr-share-picker/security/advisories/new>). Do not open a public issue. You can
 expect an answer within a week. Only the latest release receives fixes.

@@ -1,10 +1,10 @@
 # Maintainer: Erik Manchego <8992579+fire-fox@users.noreply.github.com>
-pkgname=compartir-selector
+pkgname=wlr-share-picker
 pkgver=0.4.1
 pkgrel=1
 pkgdesc="Thumbnail picker for screen sharing with xdg-desktop-portal-wlr"
 arch=('any')
-url="https://github.com/fire-fox/compartir-selector"
+url="https://github.com/fire-fox/wlr-share-picker"
 license=('MIT')
 depends=('python' 'python-gobject' 'gtk4' 'gtk4-layer-shell' 'grim' 'xdg-desktop-portal-wlr')
 optdepends=('fuzzel: text fallback when GTK is unavailable'

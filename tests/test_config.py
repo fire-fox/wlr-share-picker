@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from compartir_selector import config
+from wlr_share_picker import config
 
 
 def test_defaults(clean_env, tmp_path):
@@ -61,9 +61,9 @@ def test_validate_clamps_values(clean_env, tmp_path: Path):
 def test_environment_wins(clean_env, monkeypatch, tmp_path: Path):
     path = tmp_path / "config.toml"
     path.write_text('frontend = "gtk"\n')
-    monkeypatch.setenv("COMPARTIR_SELECTOR_CONFIG", str(path))
-    monkeypatch.setenv("COMPARTIR_SELECTOR_FRONTEND", "dmenu")
-    monkeypatch.setenv("COMPARTIR_SELECTOR_DEBUG", "1")
+    monkeypatch.setenv("WLR_SHARE_PICKER_CONFIG", str(path))
+    monkeypatch.setenv("WLR_SHARE_PICKER_FRONTEND", "dmenu")
+    monkeypatch.setenv("WLR_SHARE_PICKER_DEBUG", "1")
     cfg = config.load()
     assert cfg.frontend == "dmenu" and cfg.debug is True
 

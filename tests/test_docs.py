@@ -5,8 +5,8 @@ import re
 from dataclasses import fields
 from pathlib import Path
 
-from compartir_selector import cli
-from compartir_selector.config import Config
+from wlr_share_picker import cli
+from wlr_share_picker.config import Config
 
 ROOT = Path(__file__).resolve().parent.parent
 README = (ROOT / "README.md").read_text(encoding="utf-8")

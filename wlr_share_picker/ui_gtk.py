@@ -116,7 +116,7 @@ class Picker(Gtk.Application):
         titles: Callable[[], dict[str, str]] | None = None,
     ):
         # NON_UNIQUE: if the portal launches two pickers (Chromium asks twice), each one is independent.
-        super().__init__(application_id="dev.erik.compartir_selector", flags=Gio.ApplicationFlags.NON_UNIQUE)
+        super().__init__(application_id="io.github.fire_fox.wlr_share_picker", flags=Gio.ApplicationFlags.NON_UNIQUE)
         self.sources = sources
         self.cfg = cfg
         self.capturer = capturer
@@ -150,7 +150,7 @@ class Picker(Gtk.Application):
         Layer.init_for_window(w)
         Layer.set_layer(w, Layer.Layer.OVERLAY)
         Layer.set_keyboard_mode(w, Layer.KeyboardMode.EXCLUSIVE)
-        Layer.set_namespace(w, "compartir-selector")
+        Layer.set_namespace(w, "wlr-share-picker")
         w.set_default_size(self.columns * (self.cfg.thumbnail_width + CARD_MARGIN) + WINDOW_MARGIN, -1)
 
         box = Gtk.Box(

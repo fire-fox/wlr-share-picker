@@ -1,4 +1,4 @@
-"""Allows `python -m compartir_selector`."""
+"""Allows `python -m wlr_share_picker`."""
 
 import sys
 

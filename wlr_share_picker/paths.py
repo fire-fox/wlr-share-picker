@@ -1,8 +1,8 @@
 """Where the picker keeps its small files, and how they are written.
 
 The short-lived memory can answer a portal request without showing the dialog, so nothing is read from or written
-to a place another user could have prepared. The directories are `$XDG_RUNTIME_DIR/compartir-selector` (short-lived)
-and `$XDG_STATE_HOME/compartir-selector` (persistent), created 0700 and accepted only when they are real
+to a place another user could have prepared. The directories are `$XDG_RUNTIME_DIR/wlr-share-picker` (short-lived)
+and `$XDG_STATE_HOME/wlr-share-picker` (persistent), created 0700 and accepted only when they are real
 directories owned by this user. There is no fallback to /tmp: without `XDG_RUNTIME_DIR` the short-lived memory is
 simply off. Files are written atomically with mode 0600.
 """
@@ -16,11 +16,11 @@ from . import logs
 
 log = logs.get("paths")
 
-APP = "compartir-selector"
+APP = "wlr-share-picker"
 
 
 def _private_dir(base: Path) -> Path | None:
-    """`base/compartir-selector`, created if needed; None when it is not a directory of ours (a symlink, a file,
+    """`base/wlr-share-picker`, created if needed; None when it is not a directory of ours (a symlink, a file,
     another owner) or cannot be created. An own directory with loose permissions is tightened to 0700."""
     path = base / APP
     try:

@@ -1,6 +1,6 @@
-"""Configuration: defaults + `$XDG_CONFIG_HOME/compartir-selector/config.toml` (optional) + environment variables.
+"""Configuration: defaults + `$XDG_CONFIG_HOME/wlr-share-picker/config.toml` (optional) + environment variables.
 
-Variables: COMPARTIR_SELECTOR_CONFIG (toml path), COMPARTIR_SELECTOR_DEBUG=1, COMPARTIR_SELECTOR_FRONTEND=gtk|dmenu.
+Variables: WLR_SHARE_PICKER_CONFIG (toml path), WLR_SHARE_PICKER_DEBUG=1, WLR_SHARE_PICKER_FRONTEND=gtk|dmenu.
 """
 
 import os
@@ -89,13 +89,13 @@ def _type_ok(value, annotation) -> bool:
 
 def default_path() -> Path:
     base = Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config")
-    return base / "compartir-selector" / "config.toml"
+    return base / "wlr-share-picker" / "config.toml"
 
 
 def load(path: Path | None = None, env: dict[str, str] | None = None) -> Config:
     """Never raises: a broken toml or an unknown key is reported and whatever is valid is used."""
     environ = os.environ if env is None else env
-    path = path or Path(environ.get("COMPARTIR_SELECTOR_CONFIG") or default_path())
+    path = path or Path(environ.get("WLR_SHARE_PICKER_CONFIG") or default_path())
     values: dict = {}
     if path.is_file():
         try:
@@ -112,9 +112,9 @@ def load(path: Path | None = None, env: dict[str, str] | None = None) -> Config:
                 log.warning("config: %s = %r has the wrong type in %s, using the default", key, value, path)
                 continue
             values[key] = value
-    if environ.get("COMPARTIR_SELECTOR_DEBUG") == "1":
+    if environ.get("WLR_SHARE_PICKER_DEBUG") == "1":
         values["debug"] = True
-    if frontend := environ.get("COMPARTIR_SELECTOR_FRONTEND"):
+    if frontend := environ.get("WLR_SHARE_PICKER_FRONTEND"):
         values["frontend"] = frontend
     try:
         cfg = Config(**values)

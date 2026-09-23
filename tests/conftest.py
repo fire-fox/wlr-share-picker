@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from compartir_selector.config import Config
+from wlr_share_picker.config import Config
 
 
 @pytest.fixture
@@ -40,10 +40,10 @@ def clean_env(monkeypatch):
     for v in (
         "MANGO_INSTANCE_SIGNATURE",
         "SWAYSOCK",
-        "COMPARTIR_SELECTOR_CONFIG",
-        "COMPARTIR_SELECTOR_DEBUG",
-        "COMPARTIR_SELECTOR_FRONTEND",
-        "COMPARTIR_SELECTOR_RELAUNCHED",
+        "WLR_SHARE_PICKER_CONFIG",
+        "WLR_SHARE_PICKER_DEBUG",
+        "WLR_SHARE_PICKER_FRONTEND",
+        "WLR_SHARE_PICKER_RELAUNCHED",
     ):
         monkeypatch.delenv(v, raising=False)
     monkeypatch.setenv("XDG_CONFIG_HOME", str(os.devnull))

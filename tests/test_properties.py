@@ -14,8 +14,8 @@ hypothesis = pytest.importorskip("hypothesis")
 from hypothesis import HealthCheck, given, settings  # noqa: E402
 from hypothesis import strategies as st  # noqa: E402
 
-from compartir_selector import config, protocol, recent, requester, search, ui_dmenu  # noqa: E402
-from compartir_selector.config import Config  # noqa: E402
+from wlr_share_picker import config, protocol, recent, requester, search, ui_dmenu  # noqa: E402
+from wlr_share_picker.config import Config  # noqa: E402
 
 LINE_TEXT = st.text(alphabet=st.characters(blacklist_characters="\n\r"), max_size=80)
 IDENT = st.text(alphabet=string.ascii_letters + string.digits + "-_.:", min_size=1, max_size=32)
@@ -97,7 +97,7 @@ def test_exclude_never_hides_monitors_or_everything(lines, hide_ids, hide_titles
 def test_recall_only_answers_with_a_listed_source_for_the_same_process(lines, record, pid):
     sources = protocol.parse(lines)
     with tempfile.TemporaryDirectory() as run, mock.patch.dict("os.environ", {"XDG_RUNTIME_DIR": run}):
-        target = Path(run) / "compartir-selector"
+        target = Path(run) / "wlr-share-picker"
         target.mkdir(mode=0o700)
         (target / recent.FILE_NAME).write_text(json.dumps(record))
         answer = recent.recall(sources, Config(reuse_choice_seconds=90), now=100.0, requester_pid=pid)

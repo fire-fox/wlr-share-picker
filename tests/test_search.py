@@ -1,4 +1,4 @@
-from compartir_selector import search
+from wlr_share_picker import search
 
 
 def test_normalize_strips_accents_and_case():

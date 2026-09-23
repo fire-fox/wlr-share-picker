@@ -13,8 +13,8 @@ from . import __version__, compositor, config, logs, protocol, recent, requester
 
 log = logs.get("cli")
 
-RELAUNCHED = "COMPARTIR_SELECTOR_RELAUNCHED"
-PRELOAD_BEFORE = "COMPARTIR_SELECTOR_PRELOAD_BEFORE"  # the LD_PRELOAD the process had before relaunching
+RELAUNCHED = "WLR_SHARE_PICKER_RELAUNCHED"
+PRELOAD_BEFORE = "WLR_SHARE_PICKER_PRELOAD_BEFORE"  # the LD_PRELOAD the process had before relaunching
 LAYER_SHELL_DIRS = ("/usr/lib", "/usr/lib64", "/usr/local/lib", "/usr/lib/x86_64-linux-gnu", "/usr/lib/aarch64-linux-gnu")
 
 
@@ -48,7 +48,7 @@ def relaunch_with_layer_shell() -> None:
     if os.path.isfile(argv0):
         cmd = [sys.executable, argv0, *sys.argv[1:]]
     else:
-        cmd = [sys.executable, "-m", "compartir_selector", *sys.argv[1:]]
+        cmd = [sys.executable, "-m", "wlr_share_picker", *sys.argv[1:]]
     try:
         # S606: re-executes this same interpreter and script with our own argv, only adding LD_PRELOAD.
         os.execve(sys.executable, cmd, env)  # noqa: S606
@@ -68,12 +68,12 @@ def _restore_preload() -> None:
 
 def parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        prog="compartir-selector", description="Thumbnail picker for xdg-desktop-portal-wlr (chooser_type=dmenu)."
+        prog="wlr-share-picker", description="Thumbnail picker for xdg-desktop-portal-wlr (chooser_type=dmenu)."
     )
     p.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     p.add_argument("--frontend", choices=["auto", "gtk", "dmenu"], help="force a frontend (default: config or auto)")
     p.add_argument("--config", type=Path, help="path to config.toml")
-    p.add_argument("--debug", action="store_true", help="verbose stderr (same as COMPARTIR_SELECTOR_DEBUG=1)")
+    p.add_argument("--debug", action="store_true", help="verbose stderr (same as WLR_SHARE_PICKER_DEBUG=1)")
     p.add_argument("--screenshot", type=Path, metavar="PNG", help=argparse.SUPPRESS)  # dev aid: save the window and quit
     return p
 
@@ -129,7 +129,7 @@ def _gtk(
 def main(argv: list[str] | None = None) -> int:
     args = _args(argv)
     if args.debug:
-        os.environ["COMPARTIR_SELECTOR_DEBUG"] = "1"
+        os.environ["WLR_SHARE_PICKER_DEBUG"] = "1"
     cfg = config.load(args.config)
     if args.frontend:
         cfg = replace(cfg, frontend=args.frontend)

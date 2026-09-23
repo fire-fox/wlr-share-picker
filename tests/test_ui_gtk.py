@@ -2,7 +2,7 @@
 
 import pytest
 
-from compartir_selector.config import Config
+from wlr_share_picker.config import Config
 
 gi = pytest.importorskip("gi")
 try:
@@ -10,7 +10,7 @@ try:
     gi.require_version("Gtk4LayerShell", "1.0")
 except ValueError as e:  # typelib not installed: skip, as the picker itself falls back to dmenu
     pytest.skip(f"GTK 4 or gtk4-layer-shell typelib missing: {e}", allow_module_level=True)
-ui_gtk = pytest.importorskip("compartir_selector.ui_gtk")
+ui_gtk = pytest.importorskip("wlr_share_picker.ui_gtk")
 from gi.repository import Gdk, GLib, Gtk  # noqa: E402
 
 
@@ -53,8 +53,8 @@ def test_thumbnail_without_upscale_keeps_natural_size():
 
 def test_filter_matches_what_the_card_shows():
     """Typing the (translated) words on a monitor card finds it: «Pantalla» in Spanish, «Screen» in English."""
-    from compartir_selector import protocol
-    from compartir_selector.compositor import Client
+    from wlr_share_picker import protocol
+    from wlr_share_picker.compositor import Client
 
     monitor, window = protocol.parse(["Monitor: DP-1 ASUS\n", "Window: Roamgate (0b)\n"])
     card = ui_gtk.Card(0, monitor, Client(app_id=""))

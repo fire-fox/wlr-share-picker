@@ -30,7 +30,7 @@ class Capturer:
     def __init__(self, cfg: Config, grim: list[str] | None = None):
         self.cfg = cfg
         self.grim = grim or ["grim"]
-        self.directory = Path(tempfile.mkdtemp(prefix="compartir-selector-"))
+        self.directory = Path(tempfile.mkdtemp(prefix="wlr-share-picker-"))
         self._pool: ThreadPoolExecutor | None = None
         self._lock = threading.Lock()
         self._in_flight = 0

@@ -13,7 +13,7 @@ export XDG_CURRENT_DESKTOP=sway WLR_BACKENDS=headless WLR_RENDERER=pixman WLR_LI
 config="$(mktemp -d)"
 export XDG_CONFIG_HOME="$config"
 mkdir -p "$config/xdg-desktop-portal-wlr" "$config/xdg-desktop-portal"
-printf '[screencast]\nchooser_type=dmenu\nchooser_cmd=%s/compartir-selector\n' "$repo" > "$config/xdg-desktop-portal-wlr/config"
+printf '[screencast]\nchooser_type=dmenu\nchooser_cmd=%s/wlr-share-picker\n' "$repo" > "$config/xdg-desktop-portal-wlr/config"
 printf '[preferred]\ndefault=none\norg.freedesktop.impl.portal.ScreenCast=wlr\norg.freedesktop.impl.portal.Screenshot=wlr\n' \
   > "$config/xdg-desktop-portal/portals.conf"
 printf 'output HEADLESS-1 resolution 1280x720\n' > "$config/sway"
@@ -36,7 +36,7 @@ done
 export WAYLAND_DISPLAY SWAYSOCK
 # Whatever D-Bus starts on demand from here on gets this desktop's environment too.
 dbus-update-activation-environment WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP XDG_CONFIG_HOME GSK_RENDERER
-COMPARTIR_SELECTOR_DEBUG=1 /usr/lib/xdg-desktop-portal-wlr -l INFO > "$out/portal.log" 2>&1 &
+WLR_SHARE_PICKER_DEBUG=1 /usr/lib/xdg-desktop-portal-wlr -l INFO > "$out/portal.log" 2>&1 &
 backend=$!
 pids="$pids $backend"
 owned() {  # NameHasOwner never activates anything (a call to the name itself would start it on demand)

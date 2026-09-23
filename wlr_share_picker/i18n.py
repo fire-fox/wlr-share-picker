@@ -1,10 +1,10 @@
-"""Translations with gettext. Catalogues live in `compartir_selector/locale/<lang>/LC_MESSAGES/` (bundled) and
+"""Translations with gettext. Catalogues live in `wlr_share_picker/locale/<lang>/LC_MESSAGES/` (bundled) and
 in the system locale dir when installed as a package. The session's LANG/LANGUAGE decides; English is the source."""
 
 import gettext
 from pathlib import Path
 
-DOMAIN = "compartir-selector"
+DOMAIN = "wlr-share-picker"
 LOCALE_DIRS = (Path(__file__).parent / "locale", Path("/usr/share/locale"))
 
 

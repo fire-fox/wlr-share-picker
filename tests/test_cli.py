@@ -7,12 +7,12 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-LAUNCHER = ROOT / "compartir-selector"
+LAUNCHER = ROOT / "wlr-share-picker"
 LINES = "Monitor: DP-1 ASUS\nWindow: Roamgate (1f8f)\n"
 
 
 def _run(stdin: str, extra_env: dict, *args: str) -> subprocess.CompletedProcess:
-    env = {k: v for k, v in os.environ.items() if not k.startswith("COMPARTIR_SELECTOR_")}
+    env = {k: v for k, v in os.environ.items() if not k.startswith("WLR_SHARE_PICKER_")}
     env["XDG_RUNTIME_DIR"] = tempfile.mkdtemp()  # fresh choice memory per call unless the test shares one
     env.update(extra_env)
     return subprocess.run(
@@ -31,12 +31,12 @@ def test_dmenu_returns_the_line_as_is(fake_dmenu, tmp_path):
 def test_cancel_prints_nothing(fake_dmenu, tmp_path):
     cfg = tmp_path / "c.toml"
     cfg.write_text(f'dmenu = ["{fake_dmenu}"]\n')
-    r = _run(LINES, {"COMPARTIR_SELECTOR_FRONTEND": "dmenu"}, "--config", str(cfg))
+    r = _run(LINES, {"WLR_SHARE_PICKER_FRONTEND": "dmenu"}, "--config", str(cfg))
     assert r.returncode == 0 and r.stdout == ""
 
 
 def test_empty_stdin_exits_cleanly():
-    r = _run("", {"COMPARTIR_SELECTOR_FRONTEND": "dmenu"})
+    r = _run("", {"WLR_SHARE_PICKER_FRONTEND": "dmenu"})
     assert r.returncode == 0 and r.stdout == ""
 
 
@@ -50,7 +50,7 @@ def test_no_fallback_and_no_gtk_exits_with_1(tmp_path):
 
 def test_version():
     r = _run("", {}, "--version")
-    assert r.returncode == 0 and "compartir-selector 0." in r.stdout
+    assert r.returncode == 0 and "wlr-share-picker 0." in r.stdout
 
 
 def test_second_call_reuses_the_choice_without_asking(fake_dmenu, tmp_path):
@@ -79,7 +79,7 @@ def test_fallback_applies_the_hide_rules(tmp_path):
 
 
 def test_relaunched_process_gives_children_the_original_preload(monkeypatch):
-    from compartir_selector import cli
+    from wlr_share_picker import cli
 
     monkeypatch.setenv(cli.RELAUNCHED, "1")
     monkeypatch.setenv("LD_PRELOAD", "libgtk4-layer-shell.so.0:libmine.so")

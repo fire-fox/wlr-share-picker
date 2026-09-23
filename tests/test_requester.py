@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-from compartir_selector import protocol, requester
+from wlr_share_picker import protocol, requester
 
 CG = "0::/user.slice/user-1000.slice/user@1000.service/app.slice/{unit}\n"
 

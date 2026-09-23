@@ -19,7 +19,7 @@ DESKTOP = "org.freedesktop.portal.Desktop"
 OBJECT = "/org/freedesktop/portal/desktop"
 SCREENCAST = "org.freedesktop.portal.ScreenCast"
 MONITOR, WINDOW = 1, 2  # source types, as the portal reports them on each stream
-PICKER = str(Path(__file__).resolve().parents[2] / "compartir-selector")  # the portal's chooser_cmd, for pgrep -f
+PICKER = str(Path(__file__).resolve().parents[2] / "wlr-share-picker")  # the portal's chooser_cmd, for pgrep -f
 CANCELLED = 1
 
 
@@ -143,7 +143,7 @@ def ask(portal: Portal, log: Path, keys: list[str] | None, screenshot: Path | No
 
 def main() -> int:
     log, out = Path(sys.argv[1]), Path(sys.argv[2])
-    memory = Path(os.environ["XDG_RUNTIME_DIR"]) / "compartir-selector" / "last-choice.json"
+    memory = Path(os.environ["XDG_RUNTIME_DIR"]) / "wlr-share-picker" / "last-choice.json"
     portal = Portal()
     failures = []
 

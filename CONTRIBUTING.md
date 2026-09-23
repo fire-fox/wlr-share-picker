@@ -1,12 +1,12 @@
 # Contributing
 
-Thanks for your interest. compartir-selector decides which screen an app gets and has a single maintainer, so
+Thanks for your interest. wlr-share-picker decides which screen an app gets and has a single maintainer, so
 changes come in through a deliberately careful path.
 
 ## Bugs and ideas
 
 Open an issue with what you ran (compositor, `xdg-desktop-portal-wlr` version), what you expected and what
-happened. The picker's log helps: set `COMPARTIR_SELECTOR_DEBUG=1` for the portal and read
+happened. The picker's log helps: set `WLR_SHARE_PICKER_DEBUG=1` for the portal and read
 `journalctl --user -u xdg-desktop-portal-wlr`. **The log contains your window titles: remove anything private
 before pasting it.**
 

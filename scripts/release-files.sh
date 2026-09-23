@@ -12,9 +12,9 @@ cp dist/* "$out/"
 installed="$(mktemp -d)"
 trap 'rm -rf "$installed"' EXIT
 python -m installer --destdir "$installed" dist/*.whl
-version="$(python -c 'import compartir_selector as c; print(c.__version__)')"
-syft scan "dir:$installed" --source-name compartir-selector --source-version "$version" \
-  -o "spdx-json=$out/compartir-selector.spdx.json"
+version="$(python -c 'import wlr_share_picker as c; print(c.__version__)')"
+syft scan "dir:$installed" --source-name wlr-share-picker --source-version "$version" \
+  -o "spdx-json=$out/wlr-share-picker.spdx.json"
 # The Arch package database of this container (the `alpm` catalogers), nothing else: pseudo-filesystems and the
 # mounts stay out, and so does the list of every file each package owns (packages only: ~1 MB instead of ~20 MB).
 SYFT_FILE_METADATA_SELECTION=none SYFT_RELATIONSHIPS_PACKAGE_FILE_OWNERSHIP=false \
@@ -23,7 +23,7 @@ SYFT_FILE_METADATA_SELECTION=none SYFT_RELATIONSHIPS_PACKAGE_FILE_OWNERSHIP=fals
   --exclude './proc/**' --exclude './sys/**' --exclude './dev/**' --exclude './src/**' --exclude './w/**' \
   --exclude './out/**' --exclude './tmp/**'
 grype "sbom:$out/build-environment.spdx.json" -o table > "$out/build-environment-vulnerabilities.txt"
-for f in compartir-selector.spdx.json build-environment.spdx.json; do
+for f in wlr-share-picker.spdx.json build-environment.spdx.json; do
   test -s "$out/$f" || { echo "empty SBOM: $f" >&2; exit 1; }
 done
 echo "release files in $out:"

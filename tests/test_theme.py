@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from compartir_selector import theme
+from wlr_share_picker import theme
 
 
 def test_define_colors_follows_imports(tmp_path: Path):

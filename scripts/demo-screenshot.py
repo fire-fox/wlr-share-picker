@@ -14,27 +14,27 @@ import sys
 import tempfile
 from pathlib import Path
 
-os.environ["LANGUAGE"] = "en"  # before any compartir_selector import: gettext reads it once
+os.environ["LANGUAGE"] = "en"  # before any wlr_share_picker import: gettext reads it once
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from compartir_selector import cli  # noqa: E402
+from wlr_share_picker import cli  # noqa: E402
 
 cli.relaunch_with_layer_shell()
 
 import cairo  # noqa: E402
 
-from compartir_selector import protocol, ui_gtk  # noqa: E402
-from compartir_selector.captures import Capturer  # noqa: E402
-from compartir_selector.compositor import Client  # noqa: E402
-from compartir_selector.config import Config  # noqa: E402
+from wlr_share_picker import protocol, ui_gtk  # noqa: E402
+from wlr_share_picker.captures import Capturer  # noqa: E402
+from wlr_share_picker.compositor import Client  # noqa: E402
+from wlr_share_picker.config import Config  # noqa: E402
 
 # (portal line, app id, drawing, width, height)
 SOURCES = [
     ("Monitor: DP-1 Acme Displays UW34 0001", "", "desktop_wide", 1720, 720),
     ("Monitor: HDMI-A-1 Acme Displays FHD24 0002", "", "desktop", 1280, 720),
     ("Window: Quarterly roadmap - Chromium (a1f3)", "chromium", "document", 1400, 900),
-    ("Window: ~/src/compartir-selector - nvim (b2c4)", "kitty", "terminal", 1400, 900),
+    ("Window: ~/src/wlr-share-picker - nvim (b2c4)", "kitty", "terminal", 1400, 900),
     ("Window: Design review.odp - LibreOffice Impress (c3d5)", "libreoffice-impress", "slides", 1400, 900),
     ("Window: big_buck_bunny.mkv - mpv (d4e6)", "mpv", "video", 1400, 788),
     ("Window: Daily notes - Obsidian (e5f7)", "obsidian", "notes", 700, 1100),
@@ -105,7 +105,7 @@ def document(ctx, w, h, rng):
 
 def terminal(ctx, w, h, rng):
     chrome(ctx, w, h, "#1e1e2e", "#181825", dots=False)
-    text(ctx, 20, 29, "~/src/compartir-selector - nvim", 15, "#a6adc8")
+    text(ctx, 20, 29, "~/src/wlr-share-picker - nvim", 15, "#a6adc8")
     palette = ["#89b4fa", "#a6e3a1", "#f9e2af", "#f38ba8", "#cba6f7", "#94e2d5", "#cdd6f4", "#cdd6f4"]
     for i in range(30):
         y = 70 + i * 27
@@ -242,7 +242,7 @@ class StillPicker(ui_gtk.Picker):
 
 def main() -> int:
     out = Path(sys.argv[1] if len(sys.argv) > 1 else ROOT / "docs" / "screenshot.png").resolve()
-    work = Path(tempfile.mkdtemp(prefix="compartir-selector-demo-"))
+    work = Path(tempfile.mkdtemp(prefix="wlr-share-picker-demo-"))
     lines = [line + "\n" for line, *_ in SOURCES]
     sources = protocol.parse(lines)
     for (_line, _app, kind, w, h), source in zip(SOURCES, sources, strict=True):

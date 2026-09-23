@@ -1,8 +1,8 @@
-# compartir-selector
+# wlr-share-picker
 
-[![ci](https://github.com/fire-fox/compartir-selector/actions/workflows/ci.yml/badge.svg)](https://github.com/fire-fox/compartir-selector/actions/workflows/ci.yml)
-[![codeql](https://github.com/fire-fox/compartir-selector/actions/workflows/codeql.yml/badge.svg)](https://github.com/fire-fox/compartir-selector/actions/workflows/codeql.yml)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/fire-fox/compartir-selector/badge)](https://scorecard.dev/viewer/?uri=github.com/fire-fox/compartir-selector)
+[![ci](https://github.com/fire-fox/wlr-share-picker/actions/workflows/ci.yml/badge.svg)](https://github.com/fire-fox/wlr-share-picker/actions/workflows/ci.yml)
+[![codeql](https://github.com/fire-fox/wlr-share-picker/actions/workflows/codeql.yml/badge.svg)](https://github.com/fire-fox/wlr-share-picker/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/fire-fox/wlr-share-picker/badge)](https://scorecard.dev/viewer/?uri=github.com/fire-fox/wlr-share-picker)
 
 Thumbnail picker for screen sharing with `xdg-desktop-portal-wlr`.
 
@@ -41,17 +41,17 @@ river…); GNOME, KDE, Hyprland and niri have portals and pickers of their own.
 dependencies. Optional: `fuzzel`, `wofi`, `bemenu` or `rofi` as a text fallback if GTK cannot start.
 
 ## Install
-- **Arch Linux**: download `PKGBUILD` from the [latest release](https://github.com/fire-fox/compartir-selector/releases/latest) and run `makepkg -si`.
-- **Any distro**: `pip install --user compartir_selector-<version>-py3-none-any.whl` from the same release
+- **Arch Linux**: download `PKGBUILD` from the [latest release](https://github.com/fire-fox/wlr-share-picker/releases/latest) and run `makepkg -si`.
+- **Any distro**: `pip install --user wlr_share_picker-<version>-py3-none-any.whl` from the same release
   (the system packages above are still needed), or `pip install --user .` from a clone.
-- **From a clone, without installing**: `ln -s "$PWD/compartir-selector" ~/.local/bin/compartir-selector`.
+- **From a clone, without installing**: `ln -s "$PWD/wlr-share-picker" ~/.local/bin/wlr-share-picker`.
 
 Then point the portal at it and restart the portal (it reads its config only on start):
 ```ini
 # ~/.config/xdg-desktop-portal-wlr/config
 [screencast]
 chooser_type=dmenu
-chooser_cmd=/home/you/.local/bin/compartir-selector
+chooser_cmd=/home/you/.local/bin/wlr-share-picker
 ```
 ```bash
 systemctl --user restart xdg-desktop-portal-wlr.service
@@ -71,7 +71,7 @@ The portal is the only caller in normal use. The contract is the portal's `choos
 
 Try it by hand (window ids from `mmsg get all-clients` on mango, `swaymsg -t get_tree` on sway):
 ```bash
-printf 'Monitor: DP-1 My monitor\nWindow: Some title (1f8f762d…)\n' | compartir-selector --debug
+printf 'Monitor: DP-1 My monitor\nWindow: Some title (1f8f762d…)\n' | wlr-share-picker --debug
 ```
 
 ### Command-line options
@@ -85,18 +85,18 @@ printf 'Monitor: DP-1 My monitor\nWindow: Some title (1f8f762d…)\n' | comparti
 ### Environment variables
 | Variable | Meaning |
 |---|---|
-| `COMPARTIR_SELECTOR_CONFIG` | Config file path (the `--config` option wins). |
-| `COMPARTIR_SELECTOR_DEBUG=1` | Same as `--debug`. |
-| `COMPARTIR_SELECTOR_FRONTEND` | Same as `--frontend`. |
+| `WLR_SHARE_PICKER_CONFIG` | Config file path (the `--config` option wins). |
+| `WLR_SHARE_PICKER_DEBUG=1` | Same as `--debug`. |
+| `WLR_SHARE_PICKER_FRONTEND` | Same as `--frontend`. |
 | `XDG_CONFIG_HOME`, `XDG_RUNTIME_DIR`, `XDG_STATE_HOME` | Where config, short-lived and persistent memory live. |
 | `LANGUAGE`, `LANG` | Interface language. |
 | `MANGO_INSTANCE_SIGNATURE`, `SWAYSOCK` | Tell which compositor IPC to ask for app ids and titles. |
 
-`COMPARTIR_SELECTOR_RELAUNCHED` and `COMPARTIR_SELECTOR_PRELOAD_BEFORE` are internal (the process relaunches
+`WLR_SHARE_PICKER_RELAUNCHED` and `WLR_SHARE_PICKER_PRELOAD_BEFORE` are internal (the process relaunches
 itself once with `LD_PRELOAD` so gtk4-layer-shell loads before libwayland); do not set them.
 
 ### Configuration file
-`~/.config/compartir-selector/config.toml`, every key optional (`config.example.toml` has them all, commented).
+`~/.config/wlr-share-picker/config.toml`, every key optional (`config.example.toml` has them all, commented).
 A value of the wrong type or out of range is reported in the log and replaced, never fatal.
 
 | Key | Default | Meaning |
@@ -158,8 +158,8 @@ your user can capture the screen anyway on wlroots), the design choices behind i
 vulnerability privately: [SECURITY.md](SECURITY.md). Every release file carries a signed build provenance
 attestation, and the wheel and sdist a signed SBOM:
 ```bash
-gh attestation verify compartir_selector-<version>-py3-none-any.whl --repo fire-fox/compartir-selector \
-  --signer-workflow fire-fox/compartir-selector/.github/workflows/build.yml
+gh attestation verify wlr_share_picker-<version>-py3-none-any.whl --repo fire-fox/wlr-share-picker \
+  --signer-workflow fire-fox/wlr-share-picker/.github/workflows/build.yml
 sha256sum -c SHA256SUMS
 ```
 

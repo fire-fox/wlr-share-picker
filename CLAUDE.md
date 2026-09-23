@@ -1,4 +1,4 @@
-# compartir-selector — selector con miniaturas para compartir pantalla
+# wlr-share-picker — selector con miniaturas para compartir pantalla
 
 ## Qué es
 Selector de fuentes para `xdg-desktop-portal-wlr`: cuando Teams, Chromium u OBS piden compartir pantalla, el portal
@@ -8,7 +8,7 @@ porque el portal wlr no trae selector y los que existen con miniaturas son solo 
 Personal, en piloto: en uso diario en la PC de Erik.
 
 ## Stack
-Paquete Python (`compartir_selector/`) sin dependencias de PyPI: GTK 4, gtk4-layer-shell y `grim` del sistema.
+Paquete Python (`wlr_share_picker/`) sin dependencias de PyPI: GTK 4, gtk4-layer-shell y `grim` del sistema.
 `pyproject.toml` (PEP 621, entry point), `tests/` con pytest, `ruff` para lint y formato, `packaging/PKGBUILD`,
 CI de GitHub en contenedor `archlinux` (Ubuntu 24.04 no empaqueta gtk4-layer-shell).
 **Todo el código va en inglés** (identificadores, textos de la interfaz, logs y comentarios): está pensado para
@@ -25,21 +25,21 @@ publicarse. Este CLAUDE.md y los mensajes con Erik siguen en español.
 | `config.py` | `Config` (defaults) + `config.toml` + env. Nunca lanza: valida y avisa. |
 | `ui_gtk.py` | Solo presentación: capa overlay, columnas según el monitor más estrecho, scroll que sigue a la tarjeta activa, `Thumbnail` de caja fija, filtro (`SearchEntry` con foco + teclas en fase CAPTURE), refresco periódico de miniaturas y títulos, `--screenshot` oculto para docs. |
 | `ui_dmenu.py` | Respaldo fuzzel/wofi/bemenu/rofi; rechaza líneas que el portal no mandó. |
-| `paths.py` | Directorios privados (`$XDG_RUNTIME_DIR`/`$XDG_STATE_HOME` + `compartir-selector`, 0700, dueño propio, sin symlinks) y escritura atómica 0600. Sin `XDG_RUNTIME_DIR` no hay memoria corta (nunca `/tmp`). |
+| `paths.py` | Directorios privados (`$XDG_RUNTIME_DIR`/`$XDG_STATE_HOME` + `wlr-share-picker`, 0700, dueño propio, sin symlinks) y escritura atómica 0600. Sin `XDG_RUNTIME_DIR` no hay memoria corta (nunca `/tmp`). |
 | `recent.py` | Memoria corta en `$XDG_RUNTIME_DIR` (`reuse_choice_seconds`: segunda llamada seguida → misma fuente sin diálogo) y persistente en `$XDG_STATE_HOME` (`remember_choice`: preselección). |
 | `requester.py` | Quién pide: sesión del portal (`/org/freedesktop/portal/desktop/session/<sender>/<token>`) → `GetConnectionUnixProcessID` → cgroup `app-<id>-<pid>.scope`. Sesiones ya vistas en `$XDG_RUNTIME_DIR/…/sessions-seen.json`. Reglas `[auto]`. |
 | `search.py` | Filtro por tecleo: sin acentos ni mayúsculas, todas las palabras deben aparecer. Puro. |
 | `theme.py` | Paleta: `@define-color` de `~/.config/gtk-4.0/gtk.css` (DMS/matugen) → preset dark/light por color-scheme → `[colors]` del toml. Genera el CSS. |
 | `i18n.py` | gettext; catálogos en `locale/<lang>/LC_MESSAGES/` (`scripts/update-locales.sh` compila los .mo, que van commiteados). |
 | `logs.py` | Logging a stderr (cae en el journal del portal). |
-`legacy/compartir-selector.v1.py` es la versión de un solo archivo, archivada como referencia.
-`compartir-selector` en la raíz es el lanzador para usar desde el repo (`~/.local/bin` apunta ahí).
+`legacy/single-file-v1.py` es la versión de un solo archivo, archivada como referencia.
+`wlr-share-picker` en la raíz es el lanzador para usar desde el repo (`~/.local/bin` apunta ahí).
 
 ## Cómo correr
 ```bash
-printf 'Monitor: DP-1 ASUS\nWindow: Título (idhex)\n' | ./compartir-selector --debug   # ids de `mmsg get all-clients`
+printf 'Monitor: DP-1 ASUS\nWindow: Título (idhex)\n' | ./wlr-share-picker --debug   # ids de `mmsg get all-clients`
 ./scripts/demo-screenshot.py                                                         # regenera docs/screenshot.png con ventanas inventadas
-./compartir-selector --screenshot /tmp/x.png < fuentes.txt                           # captura con ventanas REALES: solo para mirar, nunca al repo
+./wlr-share-picker --screenshot /tmp/x.png < fuentes.txt                           # captura con ventanas REALES: solo para mirar, nunca al repo
 scripts/release.sh X.Y.Z && git push && git push origin vX.Y.Z                      # release: el workflow publica wheel, sdist y PKGBUILD
 ./scripts/update-locales.sh                                                          # tras tocar un .po
 ./scripts/smoke-keys.sh fuentes.txt                                                  # teclas reales vía wtype contra la ventana
@@ -47,13 +47,13 @@ ruff check . && ruff format --check . && python3 -m pytest -q                   
 GH_TOKEN=$(gh auth token) scripts/ci-container.sh checks                            # el CI entero, igual que en GitHub (Arch limpio, ~5 min)
 scripts/ci-container.sh desktop /tmp/d                                               # el selector en un escritorio headless con el portal real
 scripts/ci-container.sh mutation /tmp/mut                                            # mutation testing (mutmut), informe en /tmp/mut/mutation.md
-grep chooser_cmd ~/.config/xdg-desktop-portal-wlr/config                             # debe apuntar a ~/.local/bin/compartir-selector
+grep chooser_cmd ~/.config/xdg-desktop-portal-wlr/config                             # debe apuntar a ~/.local/bin/wlr-share-picker
 systemctl --user restart xdg-desktop-portal-wlr.service                              # el portal lee su config solo al arrancar
 ```
 Config del portal en `dotfiles/config/xdg-desktop-portal-wlr/config`. Config propia opcional: `config.example.toml`.
 
 ## Repo público
-`fire-fox/compartir-selector` es público (excepción a la regla de repos privados). Nada del escritorio real entra
+`fire-fox/wlr-share-picker` es público (excepción a la regla de repos privados). Nada del escritorio real entra
 al repo: la imagen del README sale solo de `scripts/demo-screenshot.py`, `.gitignore` bloquea otras imágenes y las
 listas de fuentes, y el CI corre gitleaks sobre todo el historial. Los commits van con el correo noreply de GitHub
 (`git config user.email` local del repo). El README no detalla dónde ni con qué se probó (decisión de Erik): la
@@ -91,9 +91,9 @@ y debe imprimir la línea elegida tal cual. Salir sin imprimir nada es cancelar.
 
 ## Quirks
 - gtk4-layer-shell tiene que cargarse antes que libwayland: desde Python solo se logra con `LD_PRELOAD`, así que
-  `cli.relaunch_with_layer_shell()` reemplaza el proceso una vez (marca `COMPARTIR_SELECTOR_RELAUNCHED`). Sin eso la
+  `cli.relaunch_with_layer_shell()` reemplaza el proceso una vez (marca `WLR_SHARE_PICKER_RELAUNCHED`). Sin eso la
   ventana sale en mosaico en vez de como capa encima de todo. Ya relanzado, `LD_PRELOAD` vuelve a su valor original
-  (`COMPARTIR_SELECTOR_PRELOAD_BEFORE`): si no, cada grim/mmsg/dmenu hijo cargaba GTK entero (mmsg 4 → 16 ms).
+  (`WLR_SHARE_PICKER_PRELOAD_BEFORE`): si no, cada grim/mmsg/dmenu hijo cargaba GTK entero (mmsg 4 → 16 ms).
 - Una ventana que YA se está compartiendo deja a `grim -T` colgado (comprobado con Chromium). Cada captura tiene
   timeout y al vencer se mata su grupo de procesos entero; la tarjeta queda «sin imagen» y no frena a las demás.
 - `Gtk.Picture` con la textura directa pide altura proporcional al ancho de la celda: una ventana vertical estira

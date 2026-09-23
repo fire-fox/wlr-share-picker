@@ -9,8 +9,8 @@ TMP="$(mktemp -d)"
 printf 'reuse_choice_seconds = 0\nremember_choice = false\n' > "$TMP/config.toml"
 run() {
   name="$1"; shift
-  rm -rf "${XDG_RUNTIME_DIR:-/tmp}/compartir-selector"
-  ./compartir-selector --config "$TMP/config.toml" < "$SOURCES" > "$TMP/out" 2> "$TMP/err" &
+  rm -rf "${XDG_RUNTIME_DIR:-/tmp}/wlr-share-picker"
+  ./wlr-share-picker --config "$TMP/config.toml" < "$SOURCES" > "$TMP/out" 2> "$TMP/err" &
   pid=$!
   sleep 2.5
   sh -c "$*"
@@ -24,4 +24,4 @@ run "Enter"                "wtype -k Return"
 run "type roam + Enter"    "wtype roam; sleep 0.5; wtype -k Return"
 run "Right + Enter"        "wtype -k Right; sleep 0.3; wtype -k Return"
 run "type x + Esc + Enter" "wtype zzz; sleep 0.3; wtype -k Escape; sleep 0.3; wtype -k Return"
-rm -rf "$TMP" "${XDG_RUNTIME_DIR:-/tmp}/compartir-selector"
+rm -rf "$TMP" "${XDG_RUNTIME_DIR:-/tmp}/wlr-share-picker"

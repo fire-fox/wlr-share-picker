@@ -2,8 +2,8 @@ import threading
 import time
 from pathlib import Path
 
-from compartir_selector import protocol
-from compartir_selector.captures import Capturer
+from wlr_share_picker import protocol
+from wlr_share_picker.captures import Capturer
 
 
 def _sources():

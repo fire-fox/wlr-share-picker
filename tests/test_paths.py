@@ -7,8 +7,8 @@ import tempfile
 
 import pytest
 
-from compartir_selector import paths, protocol, recent, requester
-from compartir_selector.config import Config
+from wlr_share_picker import paths, protocol, recent, requester
+from wlr_share_picker.config import Config
 
 MONITOR = ["Monitor: DP-1\n"]
 

@@ -1,6 +1,6 @@
 import pytest
 
-from compartir_selector import icons
+from wlr_share_picker import icons
 
 
 def test_candidates_without_app_id():

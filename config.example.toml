@@ -1,4 +1,4 @@
-# compartir-selector — ~/.config/compartir-selector/config.toml (every key is optional)
+# wlr-share-picker — ~/.config/wlr-share-picker/config.toml (every key is optional)
 
 # frontend = "auto"        # auto: GTK and, if it cannot start, dmenu · gtk · dmenu
 # fallback = true          # allow falling back to a dmenu when GTK fails
@@ -19,7 +19,7 @@
 # hide_titles = []         # nor windows whose title contains one of these, e.g. ["Picture-in-Picture"]
 # show_requester = true   # title says which app is asking ("Chromium wants to share your screen")
 # theme = "auto"           # auto: your ~/.config/gtk-4.0/gtk.css palette (DankMaterialShell, matugen…), else dark/light by colour scheme
-# debug = false            # or COMPARTIR_SELECTOR_DEBUG=1
+# debug = false            # or WLR_SHARE_PICKER_DEBUG=1
 
 # Tables go last: in TOML every key after a [table] header belongs to that table.
 # [auto]                   # apps answered without a dialog: requesting app (desktop id, its last segment or process name) → monitor or window app id
