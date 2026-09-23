@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+- CI: Harden-Runner blocks every outbound connection outside each job's allowed endpoints (the ones it recorded in
+  audit mode), the Arch container's included.
+
 ## 0.4.2 — 2026-09-22
 - Releases carry the Arch package (`wlr-share-picker-<version>-1-any.pkg.tar.zst`): makepkg builds it in the release
   workflow as an unprivileged user from the tagged commit (`scripts/arch-package.sh`), with a signed build

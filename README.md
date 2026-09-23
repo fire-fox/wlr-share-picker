@@ -248,8 +248,9 @@ app was identified and that every thumbnail was captured. It runs on every push 
 and a screenshot of the test desktop are kept with the run.
 
 How the pipeline protects itself:
-- Every job starts with **Harden-Runner**, which records (and can block) every outbound connection of the runner
-  and detects changes to the source during the build.
+- Every job starts with **Harden-Runner**, which blocks every outbound connection of the runner (the Arch
+  container's included) outside that job's short list of endpoints, and detects changes to the source during the
+  build.
 - Actions are pinned by commit hash (a moved tag cannot swap their code) and updated by Dependabot after a
   7-day cooldown. `trufflehog`, `grype` and `poutine`, which Arch does not package, are downloaded at their latest
   release and run only after `cosign` verifies their Sigstore signature against that project's own release

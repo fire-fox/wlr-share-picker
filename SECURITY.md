@@ -33,7 +33,8 @@ parses and tests of the invariants above (and that no invisible or direction-cha
 file outside a short list, is in the repository); an end-to-end test on a headless Wayland desktop through the
 real portal;
 `dependency-review` on pull requests. CodeQL, OpenSSF Scorecard and
-mutation testing run weekly. Every job starts with Harden-Runner (egress audit, source tampering detection).
+mutation testing run weekly. Every job starts with Harden-Runner (egress blocked outside the job's allowed endpoints, source tampering
+detection).
 
 The pipeline is built to survive a compromised tool: actions are pinned by commit hash; tools Arch does not
 package run only after their Sigstore signature is verified against their project's release workflow; the jobs
