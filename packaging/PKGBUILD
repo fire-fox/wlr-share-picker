@@ -1,0 +1,34 @@
+# Maintainer: Erik Manchego <8992579+fire-fox@users.noreply.github.com>
+pkgname=compartir-selector
+pkgver=0.4.1
+pkgrel=1
+pkgdesc="Thumbnail picker for screen sharing with xdg-desktop-portal-wlr"
+arch=('any')
+url="https://github.com/fire-fox/compartir-selector"
+license=('MIT')
+depends=('python' 'python-gobject' 'gtk4' 'gtk4-layer-shell' 'grim' 'xdg-desktop-portal-wlr')
+optdepends=('fuzzel: text fallback when GTK is unavailable'
+            'wofi: text fallback when GTK is unavailable')
+makedepends=('python-build' 'python-installer' 'python-setuptools' 'python-wheel' 'gettext')
+checkdepends=('python-pytest' 'python-hypothesis')
+source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+  cd "$pkgname-$pkgver"
+  ./scripts/update-locales.sh
+  python -m build --wheel --no-isolation
+}
+
+check() {
+  cd "$pkgname-$pkgver"
+  python -m pytest -q
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+  python -m installer --destdir="$pkgdir" dist/*.whl
+  install -Dm644 config.example.toml "$pkgdir/usr/share/doc/$pkgname/config.example.toml"
+  install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

@@ -1,0 +1,13 @@
+# Keeps the workflows' actions on their latest versions (the hash pins and their version comments together).
+# The 7-day cooldown lets a compromised release be caught and pulled before it is proposed here.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]

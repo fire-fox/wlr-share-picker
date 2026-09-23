@@ -1,0 +1,6 @@
+# Every change needs the owner's review once the ruleset on main requires code owners; the workflows and the
+# release scripts above all (a changed workflow is how a stolen token becomes a backdoor).
+*                 @fire-fox
+/.github/         @fire-fox
+/scripts/         @fire-fox
+/packaging/       @fire-fox

@@ -1,0 +1,76 @@
+name: build
+# The release build, as a reusable workflow: its identity signs the provenance and SBOM attestations, isolated from
+# the workflow that calls it (verify with gh attestation verify --signer-workflow). Two jobs on purpose: `build`
+# runs every tool without write permissions or OIDC; `publish` waits for the owner's approval in the `release`
+# environment and runs only GitHub's own actions to sign and publish what `build` left.
+on:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Every check, then the release files (scripts/ci.sh + scripts/release-files.sh)
+        run: scripts/ci-container.sh checks "$RUNNER_TEMP/release"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release
+          path: ${{ runner.temp }}/release
+          if-no-files-found: error
+          retention-days: 3
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: release  # the owner approves every release
+    permissions:
+      contents: write  # create the release
+      id-token: write  # sign the attestations (Sigstore)
+      attestations: write
+    steps:
+      - uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release
+          path: release
+      - name: Tag, package version, PKGBUILD and CHANGELOG agree
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          test "$(python3 -c 'import compartir_selector as c; print(c.__version__)')" = "$version"
+          grep -qx "pkgver=$version" packaging/PKGBUILD
+          python3 scripts/release-notes.py "$version" > "$RUNNER_TEMP/notes.md"
+      - name: PKGBUILD with the checksum of the tag's tarball, and SHA256SUMS
+        run: |
+          curl -fsSL --retry 5 -o "$RUNNER_TEMP/source.tar.gz" \
+            "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/archive/refs/tags/$GITHUB_REF_NAME.tar.gz"
+          sum="$(sha256sum "$RUNNER_TEMP/source.tar.gz" | cut -d' ' -f1)"
+          sed "s/^sha256sums=.*/sha256sums=('$sum')/" packaging/PKGBUILD > release/PKGBUILD
+          (cd release && sha256sum -- * > SHA256SUMS && cat SHA256SUMS)
+      - name: Signed build provenance for every file
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: release/*
+      - name: Signed SBOM for the wheel and the sdist
+        uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e # v4.1.0
+        with:
+          subject-path: release/compartir_selector-*
+          sbom-path: release/compartir-selector.spdx.json
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: >-
+          gh release create "$GITHUB_REF_NAME" release/*
+          --verify-tag --title "compartir-selector $GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/notes.md"

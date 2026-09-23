@@ -1,0 +1,42 @@
+# .gitignore base del estándar — secretos y artefactos nunca al repo.
+
+# Secretos (ver STANDARD.md §5: .env.local, 0600, nunca commitear)
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*_rsa
+*_ed25519
+kubeconfig*
+*.kubeconfig
+
+# Dependencias / builds
+node_modules/
+dist/
+build/
+.next/
+.astro/
+target/
+__pycache__/
+*.pyc
+.venv/
+
+# Sistema / editor
+.DS_Store
+*.log
+.direnv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Capturas y listas de fuentes llevan contenido y títulos de ventanas reales: nunca al repo.
+# La única imagen versionada es docs/screenshot.png, generada con scripts/demo-screenshot.py.
+*.png
+*.jpg
+*.jpeg
+!docs/screenshot.png
+fuentes*.txt
+sources*.txt
+.hypothesis/
+mutants/

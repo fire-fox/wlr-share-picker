@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+"""Launcher to run the picker from the repo without installing: ~/.local/bin/compartir-selector → this file."""
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+
+from compartir_selector.cli import main  # noqa: E402
+
+sys.exit(main())

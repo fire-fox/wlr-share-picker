@@ -1,0 +1,36 @@
+name: ci
+# Every check runs in scripts/ci.sh, inside a fresh Arch (scripts/ci-container.sh), the same as on your machine.
+# The job itself runs on the VM so that Harden-Runner can watch its network and files; the container gets no token.
+on:
+  push:
+    branches: ["**"]  # tags go through the release workflow, which runs the same checks before building
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Watch the runner's network and files (Harden-Runner)
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        with:
+          egress-policy: audit  # switch to block with the endpoints seen in the first runs (see CLAUDE.md)
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0  # the whole history, for gitleaks and trufflehog
+          persist-credentials: false
+      - name: Every check, inside a fresh Arch (scripts/ci.sh)
+        env:
+          GH_TOKEN: ${{ github.token }}  # read-only; only zizmor's own container receives it
+        run: scripts/ci-container.sh checks
+  dependencies:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        with:
+          egress-policy: audit
+      - name: No vulnerable or unexpected dependency comes in with the pull request
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: low

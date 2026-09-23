@@ -1,0 +1,40 @@
+# Source strings for compartir-selector. Regenerate with scripts/update-locales.sh.
+msgid ""
+msgstr ""
+"Project-Id-Version: compartir-selector\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "What do you want to share?"
+msgstr ""
+
+msgid "Arrows to move · Enter or click to share · 1-9 picks directly · type to filter · Esc to cancel"
+msgstr ""
+
+msgid "Share screen"
+msgstr ""
+
+msgid "Screen {name}"
+msgstr ""
+
+msgid "Full monitor"
+msgstr ""
+
+msgid "Window"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Filter by title or app"
+msgstr ""
+
+msgid "Nothing matches"
+msgstr ""
+
+msgid "Share: "
+msgstr ""
+
+msgid "{app} wants to share your screen"
+msgstr ""

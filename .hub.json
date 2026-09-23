@@ -1,0 +1,6 @@
+{
+  "type": "CLI / Herramienta",
+  "level": "piloto",
+  "title": "compartir-selector",
+  "notes": "Selector con miniaturas para compartir pantalla con xdg-desktop-portal-wlr (mango, sway, river, niri…): el portal le pasa monitores y ventanas por stdin, captura una miniatura de cada uno con grim y devuelve la elegida. Python + GTK 4 + gtk4-layer-shell, sin dependencias extra."
+}

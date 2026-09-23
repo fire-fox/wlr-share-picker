@@ -1,0 +1,42 @@
+# Spanish translation for compartir-selector.
+msgid ""
+msgstr ""
+"Project-Id-Version: compartir-selector\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "What do you want to share?"
+msgstr "¿Qué querés compartir?"
+
+msgid "Arrows to move · Enter or click to share · 1-9 picks directly · type to filter · Esc to cancel"
+msgstr "Flechas para moverte · Enter o clic para compartir · 1-9 elige directo · escribí para filtrar · Esc para cancelar"
+
+msgid "Share screen"
+msgstr "Compartir pantalla"
+
+msgid "Screen {name}"
+msgstr "Pantalla {name}"
+
+msgid "Full monitor"
+msgstr "Monitor completo"
+
+msgid "Window"
+msgstr "Ventana"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Filter by title or app"
+msgstr "Filtrar por título o app"
+
+msgid "Nothing matches"
+msgstr "Nada coincide"
+
+msgid "Share: "
+msgstr "Compartir: "
+
+msgid "{app} wants to share your screen"
+msgstr "{app} quiere compartir tu pantalla"
