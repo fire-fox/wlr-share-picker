@@ -69,6 +69,20 @@ justificadas en su línea); zizmor sin hallazgos (el único `ignore` lleva su mo
 cazados en el código que los tests recorren (flojos: `cli`, `captures`, `icons`, `i18n`); `ui_gtk` y `cli` casi no
 los ve porque se prueban con escritorio real y subprocesos.
 
+## Aportes externos
+PRs solo para colaboradores (Settings → General → Features). Los aportes llegan por issue, como indica
+`CONTRIBUTING.md`:
+- **A, patch (lo normal):** leer el patch entero (`git apply --stat x.patch`, y después el archivo) antes de nada;
+  `git am --3way x.patch` en una rama; `scripts/ci-container.sh checks` y `desktop` **sin** `GH_TOKEN` (el código ya
+  leído corre en contenedor, pero nunca con tu token, que tiene escritura); push de la rama, PR tuyo a `main` para
+  que corran todos los checks (incluido `dependency-review`), merge.
+- **B, rama de su fork:** más riesgoso que un PR de fork, porque pusheada a este repo corre como código propio. Si
+  toca `.github/` esa parte no se sube, se rehace a mano; `scripts/`, `tests/desktop/`, `packaging/`, `conftest.py` y
+  cambios de build se leen línea por línea; desconfiar de binarios (los tests los rechazan igual). Aportes grandes
+  de desconocidos: mejor abrir PRs a todos un tiempo con aprobación obligatoria para externos.
+- **C, colaborador:** solo gente de confianza con aportes seguidos; las reglas de `main` y tags siguen valiendo.
+Código ajeno nunca se corre en esta PC antes de leerlo, y nunca con `GH_TOKEN`.
+
 ## Contrato con el portal
 Modo `chooser_type=dmenu`: recibe por stdin una línea por fuente, «Monitor: nombre descripción» o «Window: título (id)»,
 y debe imprimir la línea elegida tal cual. Salir sin imprimir nada es cancelar. El id es el de
@@ -133,6 +147,8 @@ y debe imprimir la línea elegida tal cual. Salir sin imprimir nada es cancelar.
   master (commits de agosto sobre frames) como se hizo con mango.
 - [ ] Crear el repo público en `fire-fox`, subir y publicar `v0.4.1` (todo preparado; espera el OK de Erik). ANTES del
   primer tag: crear el environment `release` con Erik como revisor obligatorio (si no, GitHub lo crea sin protección).
+  Al crearlo: PRs «Collaborators only», Actions con aprobación para todos los externos, token de workflows de solo
+  lectura, Actions sin crear ni aprobar PRs.
 - [ ] Tras las primeras corridas en GitHub: pasar Harden-Runner de `egress-policy: audit` a `block` con los dominios
   que muestren sus informes (runners, pacman mirrors, github.com, sigstore, grype DB).
 - [ ] Probar con más de un monitor y con escala fraccional/HiDPI (solo se usó un monitor a escala 1).

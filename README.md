@@ -190,6 +190,7 @@ scripts/ci-container.sh desktop /tmp/d    # the desktop test, logs and screensho
 ```
 The hidden `--screenshot PNG` option saves the picker with **your real windows** in it: use it to check the
 layout, never for the README. `.gitignore` keeps images other than `docs/screenshot.png` out of the repo.
+How to send a change: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Continuous integration
 Everything runs from `scripts/ci.sh` inside a fresh, fully updated `archlinux:latest` container

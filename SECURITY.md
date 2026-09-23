@@ -29,7 +29,9 @@ offered (checked by property-based tests), and it only answers without a dialog 
 On every push and pull request (details in the README's *Continuous integration*): `gitleaks` and `trufflehog` over
 the whole git history, `zizmor`, `actionlint` and `poutine` over the workflows, `shellcheck`, `ruff` with the bandit
 security rules, and the test suite, which includes property-based tests (Hypothesis) of every input the picker
-parses and tests of the invariants above; an end-to-end test on a headless Wayland desktop through the real portal;
+parses and tests of the invariants above (and that no invisible or direction-changing character, nor any binary
+file outside a short list, is in the repository); an end-to-end test on a headless Wayland desktop through the
+real portal;
 `dependency-review` on pull requests. CodeQL, OpenSSF Scorecard and
 mutation testing run weekly. Every job starts with Harden-Runner (egress audit, source tampering detection).
 
