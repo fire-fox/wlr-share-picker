@@ -148,7 +148,9 @@ y debe imprimir la línea elegida tal cual. Salir sin imprimir nada es cancelar.
 - [ ] Crear el repo público en `fire-fox`, subir y publicar `v0.4.1` (todo preparado; espera el OK de Erik). ANTES del
   primer tag: crear el environment `release` con Erik como revisor obligatorio (si no, GitHub lo crea sin protección).
   Al crearlo: PRs «Collaborators only», Actions con aprobación para todos los externos, token de workflows de solo
-  lectura, Actions sin crear ni aprobar PRs.
+  lectura, Actions sin crear ni aprobar PRs. About: «Thumbnail picker for screen sharing with xdg-desktop-portal-wlr
+  (sway, river, mango…)»; topics: wayland, wlroots, screen-sharing, screencast, xdg-desktop-portal, gtk4,
+  layer-shell, sway, pipewire, python. Imagen social (Settings → Social preview) solo se sube a mano.
 - [ ] Tras las primeras corridas en GitHub: pasar Harden-Runner de `egress-policy: audit` a `block` con los dominios
   que muestren sus informes (runners, pacman mirrors, github.com, sigstore, grype DB).
 - [ ] Probar con más de un monitor y con escala fraccional/HiDPI (solo se usó un monitor a escala 1).

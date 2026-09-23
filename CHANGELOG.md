@@ -18,6 +18,7 @@ First public release.
 - Desktop test in CI and before every release: a headless sway desktop with PipeWire and the real portal; the
   picker is driven with virtual key presses and the portal must hand out the chosen monitor or window.
 - Tests reject invisible and direction-changing Unicode characters ("Trojan Source") and unexpected binary files.
+- A logo (`docs/logo.svg`) and a README header with status and technology badges and quick links.
 - `CONTRIBUTING.md`: changes arrive as patches attached to an issue; pull requests are for collaborators.
 - Fixed: a corrupt short-lived memory (`"requester_pid": Infinity`) crashed the picker; found by the property tests.
 - Releases: built without write permissions, then signed and published by a separate job after the owner's

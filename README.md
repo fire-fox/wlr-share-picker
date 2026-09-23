@@ -1,10 +1,26 @@
+<div align="center">
+
+<img src="docs/logo.svg" width="112" alt="">
+
 # wlr-share-picker
+
+**The screen-sharing picker `xdg-desktop-portal-wlr` never had: live thumbnails of every monitor and window.**
 
 [![ci](https://github.com/fire-fox/wlr-share-picker/actions/workflows/ci.yml/badge.svg)](https://github.com/fire-fox/wlr-share-picker/actions/workflows/ci.yml)
 [![codeql](https://github.com/fire-fox/wlr-share-picker/actions/workflows/codeql.yml/badge.svg)](https://github.com/fire-fox/wlr-share-picker/actions/workflows/codeql.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/fire-fox/wlr-share-picker/badge)](https://scorecard.dev/viewer/?uri=github.com/fire-fox/wlr-share-picker)
+[![release](https://img.shields.io/github/v/release/fire-fox/wlr-share-picker?sort=semver&display_name=tag)](https://github.com/fire-fox/wlr-share-picker/releases/latest)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-Thumbnail picker for screen sharing with `xdg-desktop-portal-wlr`.
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![GTK 4](https://img.shields.io/badge/GTK-4-4A86CF?style=for-the-badge&logo=gtk&logoColor=white)](https://www.gtk.org/)
+[![Wayland](https://img.shields.io/badge/Wayland-wlroots-FFBC00?style=for-the-badge&logo=wayland&logoColor=black)](https://gitlab.freedesktop.org/wlroots/wlroots)
+[![xdg-desktop-portal](https://img.shields.io/badge/xdg--desktop--portal-wlr-3B80AE?style=for-the-badge&logo=freedesktopdotorg&logoColor=white)](https://github.com/emersion/xdg-desktop-portal-wlr)
+[![Arch Linux](https://img.shields.io/badge/Arch_Linux-PKGBUILD-1793D1?style=for-the-badge&logo=archlinux&logoColor=white)](https://github.com/fire-fox/wlr-share-picker/releases/latest)
+
+[Features](#features) · [Install](#install) · [Configuration](#configuration-file) · [Security](SECURITY.md) · [Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md)
+
+</div>
 
 ![the picker: a grid of monitors and windows with live thumbnails](docs/screenshot.png)
 <sub>Illustrative screenshot: the windows are invented and drawn by `scripts/demo-screenshot.py`.</sub>
