@@ -150,8 +150,6 @@ y debe imprimir la línea elegida tal cual. Salir sin imprimir nada es cancelar.
   (`wtype -s 400`). El selector deja líneas de debug «picker mapped…», «picker keyboard focus…» y «key …» para esto.
 
 ## Pendiente
-- [ ] Enlace temporal `~/Projects/personal/escritorio/compartir-selector` → esta carpeta (lo usaban la sesión de Claude
-  y el workspace de herdr del renombre): borrarlo cuando Erik abra Claude y herdr en la ruta nueva.
 - [ ] Chromium pide dos veces: el portal wlr solo restaura monitores (verificado por D-Bus el 2026-09-22); para ventanas
   lo cubre `reuse_choice_seconds`. Falta confirmar con Chromium real si el token llega en el caso monitor (`-l DEBUG`).
 - [ ] El portal wlr cayó 4 veces el 2026-09-22 (11:30-11:33) al cerrar un stream de PipeWire (`pw_proxy_destroy`) y la
