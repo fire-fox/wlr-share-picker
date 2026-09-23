@@ -13,7 +13,8 @@ trufflehog git "file://$PWD" --results=verified,unknown --fail --no-update
 step "Workflows (zizmor offline, actionlint with shellcheck, poutine)"
 zizmor --offline .github/
 actionlint
-poutine analyze_local . --fail-on-violation
+# No version check: it calls BoostSecurity (version-check.cicd.fun), which Harden-Runner blocks anyway.
+POUTINE_DISABLE_VERSION_CHECK=1 poutine analyze_local . --fail-on-violation
 step "Shell scripts (shellcheck)"
 shellcheck scripts/*.sh tests/desktop/*.sh
 step "Translations"
