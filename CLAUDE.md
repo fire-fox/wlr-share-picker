@@ -41,8 +41,9 @@ la release (`/usr/bin/wlr-share-picker`), que es el que llama el portal.
 printf 'Monitor: DP-1 ASUS\nWindow: Título (idhex)\n' | ./wlr-share-picker --debug   # ids de `mmsg get all-clients`
 ./scripts/demo-screenshot.py                                                         # regenera docs/screenshot.png con ventanas inventadas
 ./wlr-share-picker --screenshot /tmp/x.png < fuentes.txt                           # captura con ventanas REALES: solo para mirar, nunca al repo
-scripts/release.sh X.Y.Z && git push && git push origin vX.Y.Z                      # release: el workflow publica wheel, sdist y PKGBUILD
+scripts/release.sh X.Y.Z && git push && git push origin vX.Y.Z                      # release: wheel, sdist, paquete de Arch y PKGBUILD
 ./scripts/update-locales.sh                                                          # tras tocar un .po
+scripts/arch-package.sh /tmp/pkg                                                     # el .pkg.tar.zst de HEAD con makepkg (commitear antes)
 ./scripts/smoke-keys.sh fuentes.txt                                                  # teclas reales vía wtype contra la ventana
 ruff check . && ruff format --check . && python3 -m pytest -q                        # todo sin display (incluye Hypothesis)
 GH_TOKEN=$(gh auth token) scripts/ci-container.sh checks                            # el CI entero, igual que en GitHub (Arch limpio, ~5 min)
@@ -51,11 +52,14 @@ scripts/ci-container.sh mutation /tmp/mut                                       
 grep chooser_cmd ~/.config/xdg-desktop-portal-wlr/config                             # debe apuntar a /usr/bin/wlr-share-picker
 systemctl --user restart xdg-desktop-portal-wlr.service                              # el portal lee su config solo al arrancar
 ```
-Actualizar el paquete instalado a una release nueva (verifica la firma antes de construir):
+Actualizar el paquete instalado a la última release (verifica la firma Sigstore antes de instalar):
 ```bash
-v=vX.Y.Z; d=$(mktemp -d); gh release download $v -R fire-fox/wlr-share-picker -p PKGBUILD -D $d && \
-  gh attestation verify $d/PKGBUILD -R fire-fox/wlr-share-picker && (cd $d && makepkg -si)
+d=$(mktemp -d) && gh release download -R fire-fox/wlr-share-picker -p '*.pkg.tar.zst' -D "$d" && \
+  gh attestation verify "$d"/*.pkg.tar.zst -R fire-fox/wlr-share-picker \
+    --signer-workflow fire-fox/wlr-share-picker/.github/workflows/build.yml && sudo pacman -U "$d"/*.pkg.tar.zst
 ```
+`pacman -U <url>` no sirve: `RemoteFileSigLevel` hereda `SigLevel = Required` y la release no lleva firma GPG
+(se firma con Sigstore), así que se instala el archivo local (`LocalFileSigLevel = Optional`).
 Config del portal en `dotfiles/config/xdg-desktop-portal-wlr/config`. Config propia opcional: `config.example.toml`.
 
 ## Repo público
@@ -159,7 +163,5 @@ y debe imprimir la línea elegida tal cual. Salir sin imprimir nada es cancelar.
 - [ ] Tras las primeras corridas en GitHub: pasar Harden-Runner de `egress-policy: audit` a `block` con los dominios
   que muestren sus informes (runners, pacman mirrors, github.com, sigstore, grype DB).
 - [ ] Probar con más de un monitor y con escala fraccional/HiDPI (solo se usó un monitor a escala 1).
-- [ ] 0.4.2: adjuntar a la release el paquete ya construido (`.pkg.tar.zst`, `makepkg` en el CI como usuario no root y
-  firmado como el resto) para instalar o actualizar con un `sudo pacman -U <url>`.
 - [ ] AUR: registros cerrados desde el 15-06-2026 (campaña «Atomic Arch», paquetes huérfanos adoptados con malware);
   Erik ya tiene cuenta en la ArchWiki, que no sirve para AUR. Publicar ahí cuando reabran.

@@ -16,7 +16,7 @@
 [![GTK 4](https://img.shields.io/badge/GTK-4-4A86CF?style=for-the-badge&logo=gtk&logoColor=white)](https://www.gtk.org/)
 [![Wayland](https://img.shields.io/badge/Wayland-wlroots-FFBC00?style=for-the-badge&logo=wayland&logoColor=black)](https://gitlab.freedesktop.org/wlroots/wlroots)
 [![xdg-desktop-portal](https://img.shields.io/badge/xdg--desktop--portal-wlr-3B80AE?style=for-the-badge&logo=freedesktopdotorg&logoColor=white)](https://github.com/emersion/xdg-desktop-portal-wlr)
-[![Arch Linux](https://img.shields.io/badge/Arch_Linux-PKGBUILD-1793D1?style=for-the-badge&logo=archlinux&logoColor=white)](https://github.com/fire-fox/wlr-share-picker/releases/latest)
+[![Arch Linux](https://img.shields.io/badge/Arch_Linux-package-1793D1?style=for-the-badge&logo=archlinux&logoColor=white)](https://github.com/fire-fox/wlr-share-picker/releases/latest)
 
 [Features](#features) · [Install](#install) · [Configuration](#configuration-file) · [Security](SECURITY.md) · [Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md)
 
@@ -57,17 +57,31 @@ river…); GNOME, KDE, Hyprland and niri have portals and pickers of their own.
 dependencies. Optional: `fuzzel`, `wofi`, `bemenu` or `rofi` as a text fallback if GTK cannot start.
 
 ## Install
-- **Arch Linux**: download `PKGBUILD` from the [latest release](https://github.com/fire-fox/wlr-share-picker/releases/latest) and run `makepkg -si`.
+- **Arch Linux, built package**: the [latest release](https://github.com/fire-fox/wlr-share-picker/releases/latest)
+  carries `wlr-share-picker-<version>-1-any.pkg.tar.zst`, built by makepkg in the release workflow. Download it,
+  verify its signed provenance and install it (the same command updates it):
+  ```bash
+  d=$(mktemp -d) && gh release download -R fire-fox/wlr-share-picker -p '*.pkg.tar.zst' -D "$d" &&
+    gh attestation verify "$d"/*.pkg.tar.zst -R fire-fox/wlr-share-picker \
+      --signer-workflow fire-fox/wlr-share-picker/.github/workflows/build.yml &&
+    sudo pacman -U "$d"/*.pkg.tar.zst
+  ```
+  Without `gh`: download the package and `SHA256SUMS` from the release page, run
+  `sha256sum -c --ignore-missing SHA256SUMS`, then `sudo pacman -U` the file. Install it from a local file:
+  `pacman -U <url>` refuses a package without a GPG signature, and the release is signed with Sigstore instead.
+- **Arch Linux, from source**: download `PKGBUILD` from the same release and run `makepkg -si`.
 - **Any distro**: `pip install --user wlr_share_picker-<version>-py3-none-any.whl` from the same release
   (the system packages above are still needed), or `pip install --user .` from a clone.
 - **From a clone, without installing**: `ln -s "$PWD/wlr-share-picker" ~/.local/bin/wlr-share-picker`.
 
-Then point the portal at it and restart the portal (it reads its config only on start):
+Then point the portal at it and restart the portal (it reads its config only on start). `chooser_cmd` is
+`/usr/bin/wlr-share-picker` for the Arch package, `~/.local/bin/wlr-share-picker` (written out in full) for pip
+and for the link:
 ```ini
 # ~/.config/xdg-desktop-portal-wlr/config
 [screencast]
 chooser_type=dmenu
-chooser_cmd=/home/you/.local/bin/wlr-share-picker
+chooser_cmd=/usr/bin/wlr-share-picker
 ```
 ```bash
 systemctl --user restart xdg-desktop-portal-wlr.service
@@ -254,7 +268,8 @@ git push && git push origin v0.5.0        # the release workflow publishes it
 The workflow runs every check and the desktop test again and builds the release files; after you approve it in
 the `release` environment, it verifies that the tag, the package, the PKGBUILD and the changelog agree, signs and
 publishes:
-the wheel and sdist (with a signed SPDX SBOM), a PKGBUILD carrying the tag tarball's checksum, an SBOM of the
+the wheel and sdist (with a signed SPDX SBOM), the Arch package (makepkg run by an unprivileged user on the tagged
+commit, `scripts/arch-package.sh`), a PKGBUILD carrying the tag tarball's checksum, an SBOM of the
 build environment (every Arch package it was built and tested with) with grype's vulnerability report on it, and
 `SHA256SUMS`, each file with a signed build provenance attestation.
 

@@ -18,7 +18,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Every check, then the release files (scripts/ci.sh + scripts/release-files.sh)
+      - name: Every check, then the Arch package and the release files (scripts/ci.sh, arch-package.sh, release-files.sh)
         run: scripts/ci-container.sh checks "$RUNNER_TEMP/release"
       - name: The picker on a headless desktop, through the real portal (tests/desktop)
         run: scripts/ci-container.sh desktop "$RUNNER_TEMP/desktop"
@@ -47,11 +47,12 @@ jobs:
         with:
           name: release
           path: release
-      - name: Tag, package version, PKGBUILD and CHANGELOG agree
+      - name: Tag, package version, PKGBUILD, Arch package and CHANGELOG agree
         run: |
           version="${GITHUB_REF_NAME#v}"
           test "$(python3 -c 'import wlr_share_picker as c; print(c.__version__)')" = "$version"
           grep -qx "pkgver=$version" packaging/PKGBUILD
+          ls release/wlr-share-picker-"$version"-*-any.pkg.tar.zst
           python3 scripts/release-notes.py "$version" > "$RUNNER_TEMP/notes.md"
       - name: PKGBUILD with the checksum of the tag's tarball, and SHA256SUMS
         run: |

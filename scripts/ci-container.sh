@@ -3,7 +3,8 @@
 # your machine (podman or docker). The repository is mounted read-only and copied inside: your working tree is not
 # touched. Tools Arch does not package come from scripts/ci-tools.sh, verified with Sigstore. The container gets no
 # token: with GH_TOKEN set (read-only), zizmor's online audits run in a separate container that holds nothing else.
-# Usage: scripts/ci-container.sh checks [OUT_DIR]   every check; OUT_DIR also receives the release files
+# Usage: scripts/ci-container.sh checks [OUT_DIR]   every check; OUT_DIR also receives the release files and the
+#                                                    Arch package
 #        scripts/ci-container.sh desktop [OUT_DIR]  the picker on a headless desktop through the real portal
 #        scripts/ci-container.sh mutation OUT_DIR   weekly mutation testing (scripts/mutation.sh), report in OUT_DIR
 set -eu
@@ -17,7 +18,7 @@ case "$mode" in
   checks)
     packages="$base python-build python-installer python-setuptools python-wheel ruff gitleaks zizmor actionlint \
 shellcheck cosign syft"
-    commands="scripts/ci-tools.sh /usr/local/bin && scripts/ci.sh && if [ -d /out ]; then scripts/release-files.sh /out; fi" ;;
+    commands="scripts/ci-tools.sh /usr/local/bin && scripts/ci.sh && if [ -d /out ]; then scripts/arch-package.sh /out && scripts/release-files.sh /out; fi" ;;
   desktop)
     packages="$base sway xdg-desktop-portal xdg-desktop-portal-wlr pipewire wireplumber wtype foot ttf-dejavu procps-ng"
     commands="tests/desktop/container.sh /out" ;;
