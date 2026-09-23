@@ -33,7 +33,8 @@ publicarse. Este CLAUDE.md y los mensajes con Erik siguen en español.
 | `i18n.py` | gettext; catálogos en `locale/<lang>/LC_MESSAGES/` (`scripts/update-locales.sh` compila los .mo, que van commiteados). |
 | `logs.py` | Logging a stderr (cae en el journal del portal). |
 `legacy/single-file-v1.py` es la versión de un solo archivo, archivada como referencia.
-`wlr-share-picker` en la raíz es el lanzador para usar desde el repo (`~/.local/bin` apunta ahí).
+`wlr-share-picker` en la raíz es el lanzador para probar desde el repo. El de uso diario es el paquete instalado desde
+la release (`/usr/bin/wlr-share-picker`), que es el que llama el portal.
 
 ## Cómo correr
 ```bash
@@ -47,8 +48,13 @@ ruff check . && ruff format --check . && python3 -m pytest -q                   
 GH_TOKEN=$(gh auth token) scripts/ci-container.sh checks                            # el CI entero, igual que en GitHub (Arch limpio, ~5 min)
 scripts/ci-container.sh desktop /tmp/d                                               # el selector en un escritorio headless con el portal real
 scripts/ci-container.sh mutation /tmp/mut                                            # mutation testing (mutmut), informe en /tmp/mut/mutation.md
-grep chooser_cmd ~/.config/xdg-desktop-portal-wlr/config                             # debe apuntar a ~/.local/bin/wlr-share-picker
+grep chooser_cmd ~/.config/xdg-desktop-portal-wlr/config                             # debe apuntar a /usr/bin/wlr-share-picker
 systemctl --user restart xdg-desktop-portal-wlr.service                              # el portal lee su config solo al arrancar
+```
+Actualizar el paquete instalado a una release nueva (verifica la firma antes de construir):
+```bash
+v=vX.Y.Z; d=$(mktemp -d); gh release download $v -R fire-fox/wlr-share-picker -p PKGBUILD -D $d && \
+  gh attestation verify $d/PKGBUILD -R fire-fox/wlr-share-picker && (cd $d && makepkg -si)
 ```
 Config del portal en `dotfiles/config/xdg-desktop-portal-wlr/config`. Config propia opcional: `config.example.toml`.
 
@@ -58,6 +64,11 @@ al repo: la imagen del README sale solo de `scripts/demo-screenshot.py`, `.gitig
 listas de fuentes, y el CI corre gitleaks sobre todo el historial. Los commits van con el correo noreply de GitHub
 (`git config user.email` local del repo). El README no detalla dónde ni con qué se probó (decisión de Erik): la
 prueba que cuenta es la de escritorio del CI; no se afirma nada que no se haya corrido.
+Configurado en GitHub (API, 2026-09-23): PRs «collaborators only»; Actions con aprobación para todos los externos, token
+de solo lectura, sin crear ni aprobar PRs y SHA pinning obligatorio; rulesets `main` (sin borrado ni force-push) y
+`release tags` (`v*` solo el admin); environment `release` con Erik como revisor y solo tags `v*`; secret scanning con
+push protection, alertas y updates de Dependabot, reporte privado de vulnerabilidades, immutable releases; About y 10
+topics. La imagen social (Settings → Social preview) solo se sube a mano.
 Seguridad (detalle en `SECURITY.md` y en «Continuous integration» del README): todo el CI vive en `scripts/ci.sh`
 y corre en un Arch limpio (`scripts/ci-container.sh`), igual en GitHub y en local. Los jobs corren en la VM (no
 `container:`) porque Harden-Runner no soporta jobs en contenedor. trufflehog, grype y poutine no están en Arch:
@@ -139,22 +150,18 @@ y debe imprimir la línea elegida tal cual. Salir sin imprimir nada es cancelar.
   (`wtype -s 400`). El selector deja líneas de debug «picker mapped…», «picker keyboard focus…» y «key …» para esto.
 
 ## Pendiente
-- [ ] Respaldos temporales del renombre: el enlace `~/Projects/personal/escritorio/compartir-selector` → esta carpeta
-  (esta sesión de Claude y el workspace de herdr la usaban) y `~/.local/bin/compartir-selector`. El portal ya usa
-  `~/.local/bin/wlr-share-picker`. Borrar ambos enlaces cuando Erik confirme que todo anda y abra la sesión en la ruta nueva.
+- [ ] Enlace temporal `~/Projects/personal/escritorio/compartir-selector` → esta carpeta (lo usaban la sesión de Claude
+  y el workspace de herdr del renombre): borrarlo cuando Erik abra Claude y herdr en la ruta nueva.
 - [ ] Chromium pide dos veces: el portal wlr solo restaura monitores (verificado por D-Bus el 2026-09-22); para ventanas
   lo cubre `reuse_choice_seconds`. Falta confirmar con Chromium real si el token llega en el caso monitor (`-l DEBUG`).
 - [ ] El portal wlr cayó 4 veces el 2026-09-22 (11:30-11:33) al cerrar un stream de PipeWire (`pw_proxy_destroy`) y la
   instancia reiniciada quedó sin entregar el primer frame de las ventanas (vista previa vacía en Chromium hasta mover
   el mouse). Un `systemctl --user restart xdg-desktop-portal-wlr` lo curó. Si vuelve: valorar compilar el portal de
   master (commits de agosto sobre frames) como se hizo con mango.
-- [ ] Crear el repo público en `fire-fox`, subir y publicar `v0.4.1` (todo preparado; espera el OK de Erik). ANTES del
-  primer tag: crear el environment `release` con Erik como revisor obligatorio (si no, GitHub lo crea sin protección).
-  Al crearlo: PRs «Collaborators only», Actions con aprobación para todos los externos, token de workflows de solo
-  lectura, Actions sin crear ni aprobar PRs. About: «Thumbnail picker for screen sharing with xdg-desktop-portal-wlr
-  (sway, river, mango…)»; topics: wayland, wlroots, screen-sharing, screencast, xdg-desktop-portal, gtk4,
-  layer-shell, sway, pipewire, python. Imagen social (Settings → Social preview) solo se sube a mano.
 - [ ] Tras las primeras corridas en GitHub: pasar Harden-Runner de `egress-policy: audit` a `block` con los dominios
   que muestren sus informes (runners, pacman mirrors, github.com, sigstore, grype DB).
 - [ ] Probar con más de un monitor y con escala fraccional/HiDPI (solo se usó un monitor a escala 1).
-- [ ] PKGBUILD: apunta al tarball del tag en GitHub; probar `makepkg -si` con el de la primera release.
+- [ ] 0.4.2: adjuntar a la release el paquete ya construido (`.pkg.tar.zst`, `makepkg` en el CI como usuario no root y
+  firmado como el resto) para instalar o actualizar con un `sudo pacman -U <url>`.
+- [ ] AUR: registros cerrados desde el 15-06-2026 (campaña «Atomic Arch», paquetes huérfanos adoptados con malware);
+  Erik ya tiene cuenta en la ArchWiki, que no sirve para AUR. Publicar ahí cuando reabran.
