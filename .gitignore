@@ -38,5 +38,8 @@ __pycache__/
 !docs/screenshot.png
 fuentes*.txt
 sources*.txt
+
+# Notas locales del mantenedor para Claude Code: describen su escritorio, nunca al repo.
+CLAUDE.md
 .hypothesis/
 mutants/
