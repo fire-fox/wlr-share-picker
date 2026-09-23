@@ -1,6 +1,6 @@
 # Maintainer: Erik Manchego <8992579+fire-fox@users.noreply.github.com>
 pkgname=wlr-share-picker
-pkgver=0.4.1
+pkgver=0.4.2
 pkgrel=1
 pkgdesc="Thumbnail picker for screen sharing with xdg-desktop-portal-wlr"
 arch=('any')
