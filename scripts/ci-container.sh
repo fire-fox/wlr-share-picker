@@ -4,19 +4,23 @@
 # touched. Tools Arch does not package come from scripts/ci-tools.sh, verified with Sigstore. The container gets no
 # token: with GH_TOKEN set (read-only), zizmor's online audits run in a separate container that holds nothing else.
 # Usage: scripts/ci-container.sh checks [OUT_DIR]   every check; OUT_DIR also receives the release files
+#        scripts/ci-container.sh desktop [OUT_DIR]  the picker on a headless desktop through the real portal
 #        scripts/ci-container.sh mutation OUT_DIR   weekly mutation testing (scripts/mutation.sh), report in OUT_DIR
 set -eu
 cd "$(dirname "$0")/.."
 engine="$(command -v podman || command -v docker)"
 image="docker.io/library/archlinux:latest"
 base="git python python-gobject gtk4 gtk4-layer-shell grim gettext python-pytest python-hypothesis"
-mode="${1:?usage: scripts/ci-container.sh checks [OUT_DIR] | mutation OUT_DIR}"
+mode="${1:?usage: scripts/ci-container.sh checks [OUT_DIR] | desktop [OUT_DIR] | mutation OUT_DIR}"
 out="${2:-}"
 case "$mode" in
   checks)
     packages="$base python-build python-installer python-setuptools python-wheel ruff gitleaks zizmor actionlint \
 shellcheck cosign syft"
     commands="scripts/ci-tools.sh /usr/local/bin && scripts/ci.sh && if [ -d /out ]; then scripts/release-files.sh /out; fi" ;;
+  desktop)
+    packages="$base sway xdg-desktop-portal xdg-desktop-portal-wlr pipewire wireplumber wtype foot ttf-dejavu procps-ng"
+    commands="tests/desktop/container.sh /out" ;;
   mutation)
     packages="$base python-pip"
     commands="scripts/mutation.sh /out" ;;

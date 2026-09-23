@@ -45,6 +45,7 @@ scripts/release.sh X.Y.Z && git push && git push origin vX.Y.Z                  
 ./scripts/smoke-keys.sh fuentes.txt                                                  # teclas reales vía wtype contra la ventana
 ruff check . && ruff format --check . && python3 -m pytest -q                        # todo sin display (incluye Hypothesis)
 GH_TOKEN=$(gh auth token) scripts/ci-container.sh checks                            # el CI entero, igual que en GitHub (Arch limpio, ~5 min)
+scripts/ci-container.sh desktop /tmp/d                                               # el selector en un escritorio headless con el portal real
 scripts/ci-container.sh mutation /tmp/mut                                            # mutation testing (mutmut), informe en /tmp/mut/mutation.md
 grep chooser_cmd ~/.config/xdg-desktop-portal-wlr/config                             # debe apuntar a ~/.local/bin/compartir-selector
 systemctl --user restart xdg-desktop-portal-wlr.service                              # el portal lee su config solo al arrancar
@@ -55,8 +56,8 @@ Config del portal en `dotfiles/config/xdg-desktop-portal-wlr/config`. Config pro
 `fire-fox/compartir-selector` es público (excepción a la regla de repos privados). Nada del escritorio real entra
 al repo: la imagen del README sale solo de `scripts/demo-screenshot.py`, `.gitignore` bloquea otras imágenes y las
 listas de fuentes, y el CI corre gitleaks sobre todo el historial. Los commits van con el correo noreply de GitHub
-(`git config user.email` local del repo). La sección «What has been tested» del README se actualiza con cada cosa
-que se pruebe de verdad; no se afirma nada que no se haya corrido.
+(`git config user.email` local del repo). El README no detalla dónde ni con qué se probó (decisión de Erik): la
+prueba que cuenta es la de escritorio del CI; no se afirma nada que no se haya corrido.
 Seguridad (detalle en `SECURITY.md` y en «Continuous integration» del README): todo el CI vive en `scripts/ci.sh`
 y corre en un Arch limpio (`scripts/ci-container.sh`), igual en GitHub y en local. Los jobs corren en la VM (no
 `container:`) porque Harden-Runner no soporta jobs en contenedor. trufflehog, grype y poutine no están en Arch:
@@ -114,6 +115,15 @@ y debe imprimir la línea elegida tal cual. Salir sin imprimir nada es cancelar.
   (`restore_token`) existe en Chromium 153 y en xdpw 0.8, pero xdpw solo restaura monitores, nunca ventanas.
   La `Gtk.Application` es `NON_UNIQUE` por si dos selectores coinciden.
 
+- Prueba de escritorio (`tests/desktop/`): sway headless (`WLR_BACKENDS=headless`, `WLR_RENDERER=pixman`) +
+  PipeWire + portal real en un contenedor, como usuario normal en `dbus-run-session`. Trampas ya resueltas: sway trae
+  la capacidad `cap_sys_nice` y en un contenedor el exec falla con EPERM (`setcap -r`, solo en el contenedor); el
+  portal busca sus backends una sola vez al arrancar, así que `xdg-desktop-portal-wlr` debe tener su nombre en el bus
+  antes (`NameHasOwner`, que no activa nada); una app GTK que arranca antes que el portal hace que D-Bus lance otro
+  portal sin ScreenCast que se queda con el nombre (las ventanas de prueba arrancan después); nada de `| grep -q`
+  sobre la llamada que activa el portal; cada `wtype` crea un teclado virtual y sway quita y devuelve el foco
+  (`wtype -s 400`). El selector deja líneas de debug «picker mapped…», «picker keyboard focus…» y «key …» para esto.
+
 ## Pendiente
 - [ ] Chromium pide dos veces: el portal wlr solo restaura monitores (verificado por D-Bus el 2026-09-22); para ventanas
   lo cubre `reuse_choice_seconds`. Falta confirmar con Chromium real si el token llega en el caso monitor (`-l DEBUG`).
@@ -126,5 +136,4 @@ y debe imprimir la línea elegida tal cual. Salir sin imprimir nada es cancelar.
 - [ ] Tras las primeras corridas en GitHub: pasar Harden-Runner de `egress-policy: audit` a `block` con los dominios
   que muestren sus informes (runners, pacman mirrors, github.com, sigstore, grype DB).
 - [ ] Probar con más de un monitor y con escala fraccional/HiDPI (solo se usó un monitor a escala 1).
-- [ ] Probar el backend `Sway` en un sway real (está escrito contra el JSON documentado, sin probar en vivo).
 - [ ] PKGBUILD: apunta al tarball del tag en GitHub; probar `makepkg -si` con el de la primera release.

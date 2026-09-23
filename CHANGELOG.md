@@ -3,7 +3,7 @@
 ## 0.4.1 — 2026-09-22
 First public release.
 - Releases from tags: GitHub workflow with wheel, sdist and a PKGBUILD with checksum; `scripts/release.sh`.
-- README: features, every input (stdin, options, environment, config keys) and what has and has not been tested.
+- README: features and every input (stdin, options, environment, config keys), with a test that keeps them listed.
 - Where the pointer rests when the picker opens no longer overrides the preselection.
 - The README screenshot is drawn from invented windows (`scripts/demo-screenshot.py`), never a real screen.
 - Security: state files only in private directories owned by the user (0700, no symlinks, files 0600 written
@@ -15,6 +15,9 @@ First public release.
   workflows; shellcheck; ruff with the bandit rules; dependency-review on pull requests; CodeQL, OpenSSF Scorecard
   and weekly mutation testing (mutmut); actions pinned by hash with Dependabot (7-day cooldown); tools outside Arch
   verified with Sigstore before running (`scripts/ci-tools.sh`).
+- Desktop test in CI and before every release: a headless sway desktop with PipeWire and the real portal; the
+  picker is driven with virtual key presses and the portal must hand out the chosen monitor or window.
+- Fixed: a corrupt short-lived memory (`"requester_pid": Infinity`) crashed the picker; found by the property tests.
 - Releases: built without write permissions, then signed and published by a separate job after the owner's
   approval; SPDX SBOMs of the package (signed) and of the build environment with grype's report; `SHA256SUMS`;
   signed build provenance for every file.

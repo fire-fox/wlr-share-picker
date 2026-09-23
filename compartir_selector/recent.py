@@ -86,7 +86,7 @@ def recall(sources: list[Source], cfg: Config, now: float | None = None, request
     try:
         kind, ident, when = record["kind"], record["id"], float(record["time"])  # type: ignore[index]
         chooser_pid = int(record.get("requester_pid") or 0)  # type: ignore[union-attr]
-    except (KeyError, TypeError, ValueError):
+    except (KeyError, TypeError, ValueError, OverflowError):  # OverflowError: "requester_pid": Infinity
         return None
     age = (now if now is not None else time.time()) - when
     if not 0 <= age <= cfg.reuse_choice_seconds:

@@ -11,8 +11,8 @@ Thumbnail picker for screen sharing with `xdg-desktop-portal-wlr`.
 
 When an app asks to share the screen, the wlr portal has no picker of its own: it runs an external program and
 expects one line back. This one shows a grid with a live thumbnail, icon and title of every monitor and window, and
-returns the chosen source. It is meant for wlroots compositors that use `xdg-desktop-portal-wlr` (mango, sway,
-river…); see [What has been tested](#what-has-been-tested) for what has actually been run.
+returns the chosen source. It works with the wlroots compositors that use `xdg-desktop-portal-wlr` (mango, sway,
+river…); GNOME, KDE, Hyprland and niri have portals and pickers of their own.
 
 ## Features
 1. **Thumbnail grid** of every monitor and window the portal offers, captured with `grim`, with the app's icon and
@@ -146,45 +146,9 @@ process within `reuse_choice_seconds` gets the same source without a dialog, as 
 a cancel) and the source still exists. Windows are matched by id, so a changed title is fine. Another app asking
 meanwhile still gets the dialog, and so does a request whose app cannot be told.
 
-## What has been tested
-Honestly, as of 0.4.1:
-
-**Used for real** on one machine since 2026-09-22: CachyOS (Arch), mango 0.17.3 with a local patch (below),
-`xdg-desktop-portal-wlr` 0.8.4, `xdg-desktop-portal` 1.22.1, GTK 4.22.5, gtk4-layer-shell 1.3.0, PyGObject 3.56.3,
-Python 3.14, grim 1.5.0, one 3440×1440 monitor at scale 1. Through the real portal it has shared the monitor and
-windows of Chromium, Teams for Linux and others, with Chromium 153 as the requesting app, including its double
-request answered from memory. A scripted D-Bus ScreenCast request confirmed the requester detection end to end.
-
-**Driven on the real desktop by scripts**: keyboard (`scripts/smoke-keys.sh`, keys sent with `wtype`), keyboard
-scrolling on a 25-source grid, hover with a virtual pointer (`wlrctl`), and the `fuzzel` 1.15 fallback.
-
-**Automated**: 102 pytest tests, none needing a display: protocol parsing, config validation, compositor backends
-fed with recorded JSON, capture timeouts with a fake `grim`, search, theme, both memories, requester detection
-with fake D-Bus sessions and `/proc`, the dmenu fallback, the command line end to end, the fixed-size thumbnail
-paintable, release metadata, and that this README documents every option and config key. Among them,
-property-based tests (Hypothesis, hundreds of generated cases each) of every input the picker parses (portal
-lines, window titles, the dmenu's answer, any config file, `/proc`, the memories) and security tests of the
-invariants in [SECURITY.md](SECURITY.md): no shell, no markup, no network, private files and directories, a
-planted symlink or directory refused. CI runs them in a clean Arch container together with the checks listed in
-[Continuous integration](#continuous-integration). Mutation testing (mutmut, weekly) measures how many small
-bugs they would catch: about two thirds of the changes in the code they exercise (the weekly report has the
-figure per module); the GTK frontend and the command line are covered by the desktop and subprocess tests above,
-which mutmut cannot follow.
-
-**Not tested yet**:
-- **sway**: its backend is written against the documented `swaymsg -t get_tree` JSON but has never run on sway.
-  river and other wlroots compositors: the picker should work, but without an app-id backend the cards have no
-  icon or app name.
-- **More than one monitor** and **fractional or HiDPI scaling**: the code handles several outputs (it sizes the
-  grid for the narrowest one), but only one monitor at scale 1 has been used.
-- **Requesting apps other than Chromium** (Firefox, OBS, Electron apps asking directly), `[auto]` with a real
-  remote-desktop app, and the `wofi`, `bemenu` and `rofi` fallbacks.
-
-**Not supported**: compositors that do not use the wlr portal (GNOME, KDE, Hyprland and niri have their own
-portals and pickers).
-
-**Known limits**: a window that is already being shared makes `grim -T` hang, so its card shows no thumbnail
-(the timeout keeps the rest going). On mango 0.17.3, `grim -T` fails ("Invalid stride") for windows whose width
+## Known limits
+A window that is already being shared makes `grim -T` hang, so its card shows no thumbnail (the timeout keeps
+the rest going). On mango 0.17.3, `grim -T` fails ("Invalid stride") for windows whose width
 is not a multiple of 4 unless mango is patched; without the patch most windows have no thumbnail.
 
 ## Security
@@ -221,6 +185,7 @@ pacman -S python-pytest python-hypothesis ruff gettext   # or: pip install --use
 ./scripts/update-locales.sh               # compile translations after editing a .po
 ruff check . && ruff format --check . && pytest -q
 scripts/ci-container.sh checks            # the whole CI, exactly as on GitHub, in a fresh Arch (podman or docker)
+scripts/ci-container.sh desktop /tmp/d    # the desktop test, logs and screenshot in /tmp/d
 ./scripts/demo-screenshot.py              # regenerate docs/screenshot.png from invented windows
 ```
 The hidden `--screenshot PNG` option saves the picker with **your real windows** in it: use it to check the
@@ -235,11 +200,21 @@ Everything runs from `scripts/ci.sh` inside a fresh, fully updated `archlinux:la
 | Secrets in every commit | `gitleaks`, and `trufflehog`, which also asks each service whether a found secret is live |
 | Workflows | `zizmor` (online audits too: impostor commits, known-vulnerable actions), `actionlint` with `shellcheck`, `poutine` |
 | Shell scripts | `shellcheck` |
-| Python | `ruff` with the bandit security rules; CodeQL `security-extended` (weekly and on `main`) |
+| Python | `ruff` with the bandit security rules; CodeQL `security-extended` (on `main`, pull requests and weekly) |
 | Behaviour | `pytest`: unit, end-to-end, property-based (Hypothesis) and security-invariant tests |
+| On a desktop | `tests/desktop`: a headless sway desktop with PipeWire and the real portal; see below |
 | Pull requests | `dependency-review`: no vulnerable or unexpected dependency comes in |
 | Test strength | `mutmut`, weekly, report in the run summary |
-| Repository practices | OpenSSF Scorecard, weekly |
+| Repository practices | OpenSSF Scorecard, on `main` and weekly |
+
+The desktop test (`scripts/ci-container.sh desktop`) boots a basic Wayland desktop with nothing on it but two test
+windows: headless sway with software rendering, PipeWire, `xdg-desktop-portal` and `xdg-desktop-portal-wlr` with
+this picker as its chooser. It then asks for the screen through D-Bus the way Chromium or OBS do and drives the
+picker with virtual key presses: Esc must cancel, a digit must share that window and the portal must hand out a
+PipeWire stream of a window, a second request from the same app must be answered without a dialog, and the other
+digit must share the monitor. It also checks that the compositor backend named the windows, that the requesting
+app was identified and that every thumbnail was captured. It runs on every push and before every release; the logs
+and a screenshot of the test desktop are kept with the run.
 
 How the pipeline protects itself:
 - Every job starts with **Harden-Runner**, which records (and can block) every outbound connection of the runner
@@ -259,8 +234,9 @@ Write the changes under `## Unreleased` in `CHANGELOG.md`, then:
 scripts/release.sh 0.5.0                  # version in the package and PKGBUILD, checks, commit, tag v0.5.0
 git push && git push origin v0.5.0        # the release workflow publishes it
 ```
-The workflow runs every check again and builds the release files; after you approve it in the `release`
-environment, it verifies that the tag, the package, the PKGBUILD and the changelog agree, signs and publishes:
+The workflow runs every check and the desktop test again and builds the release files; after you approve it in
+the `release` environment, it verifies that the tag, the package, the PKGBUILD and the changelog agree, signs and
+publishes:
 the wheel and sdist (with a signed SPDX SBOM), a PKGBUILD carrying the tag tarball's checksum, an SBOM of the
 build environment (every Arch package it was built and tested with) with grype's vulnerability report on it, and
 `SHA256SUMS`, each file with a signed build provenance attestation.

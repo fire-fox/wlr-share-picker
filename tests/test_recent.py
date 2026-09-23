@@ -72,3 +72,18 @@ def test_recall_is_bound_to_the_requesting_process(tmp_path, monkeypatch):
     recent.remember(LINES[1], now=1000.0)  # chooser did not know who asked either
     assert recent.recall(_sources(), cfg, now=1010.0, requester_pid=0) is not None  # blind matches blind: time only
     assert recent.recall(_sources(), cfg, now=1010.0, requester_pid=777) is None
+
+
+def test_recall_survives_a_corrupt_record(tmp_path, monkeypatch):
+    """Found by the property tests: JSON accepts Infinity, and int(inf) raises OverflowError."""
+    monkeypatch.setenv("XDG_RUNTIME_DIR", str(tmp_path))
+    directory = tmp_path / "compartir-selector"
+    directory.mkdir(mode=0o700)
+    for record in (
+        '{"kind": "monitor", "id": "DP-1", "time": 1000, "requester_pid": Infinity}',
+        '{"kind": "monitor", "id": "DP-1", "time": NaN}',
+        "[1, 2]",
+        '"text"',
+    ):
+        (directory / recent.FILE_NAME).write_text(record)
+        assert recent.recall(_sources(), Config(reuse_choice_seconds=90), now=1001.0) is None

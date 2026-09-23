@@ -48,7 +48,7 @@ target-version = "py311"
 select = ["E", "F", "W", "I", "B", "UP", "SIM", "S"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101", "S603", "S108"]  # asserts, running the launcher and fakes, fixed paths inside tmp dirs
+"tests/*" = ["S101", "S603", "S607", "S108"]  # asserts, running the launcher, fakes and desktop tools by name, tmp paths
 "scripts/*" = ["S311"]  # seeded random for the drawings of the demo screenshot, not for secrets
 
 [tool.mutmut]  # scripts/mutation.sh, weekly in CI

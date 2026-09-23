@@ -222,6 +222,9 @@ class Picker(Gtk.Application):
             GLib.unix_signal_add(GLib.PRIORITY_HIGH, s, self._on_signal, s)
 
         self._mark(self.preselect, reveal=True)
+        # Debug lines tests/desktop relies on: when the window is on screen and when it holds the keyboard.
+        w.connect("map", lambda *_: log.debug("picker mapped with %d sources", len(self.sources)))
+        w.connect("notify::is-active", lambda win, _pspec: log.debug("picker keyboard focus: %s", win.is_active()))
         w.present()
         self.filter.grab_focus()
         self.capturer.run_all(self.sources, self._thumbnail_ready)
@@ -446,6 +449,7 @@ class Picker(Gtk.Application):
 
     def _on_key(self, _ctl, keyval, _keycode, _state) -> bool:
         k = (Gdk.keyval_name(keyval) or "").removeprefix("KP_")  # keypad digits and KP_Enter behave like the others
+        log.debug("key %s", k)
         filtering = bool(self.filter.get_text())
         if k == "Escape":
             if filtering:

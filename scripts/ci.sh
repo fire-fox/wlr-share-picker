@@ -15,7 +15,7 @@ zizmor --offline .github/
 actionlint
 poutine analyze_local . --fail-on-violation
 step "Shell scripts (shellcheck)"
-shellcheck scripts/*.sh
+shellcheck scripts/*.sh tests/desktop/*.sh
 step "Translations"
 ./scripts/update-locales.sh
 step "Lint, formatting and the bandit security rules (ruff)"

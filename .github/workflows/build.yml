@@ -20,6 +20,8 @@ jobs:
           persist-credentials: false
       - name: Every check, then the release files (scripts/ci.sh + scripts/release-files.sh)
         run: scripts/ci-container.sh checks "$RUNNER_TEMP/release"
+      - name: The picker on a headless desktop, through the real portal (tests/desktop)
+        run: scripts/ci-container.sh desktop "$RUNNER_TEMP/desktop"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: release
